@@ -1,0 +1,126 @@
+{
+    "preload": {
+        "files": [
+            {
+                "type": "image",
+                "key": "background",
+                "url": "./assets/images/background.png"
+            },
+            {
+                "type": "image",
+                "key": "sprintButton",
+                "url": "./assets/images/sprint.png"
+            },
+            {
+                "type": "image",
+                "key": "shortSword",
+                "url": "./assets/weapons/short_sword.png"
+            },
+            {
+                "type": "image",
+                "key": "meat",
+                "url": "./assets/images/meat.png"
+            },
+            {
+                "type": "image",
+                "key": "meat2",
+                "url": "./assets/images/meat2.png"
+            },
+            {
+                "type": "image",
+                "key": "shield",
+                "url": "./assets/images/shield.png"
+            },
+            {
+                "type": "image",
+                "key": "fishHead",
+                "url": "./assets/images/fishhead.png"
+            },
+            {
+                "type": "image",
+                "key": "back",
+                "url": "./assets/popup/back.png"
+            },
+            {
+                "type": "image",
+                "key": "score",
+                "url": "./assets/popup/score.png"
+            },
+            {
+                "type": "image",
+                "key": "high",
+                "url": "./assets/popup/high.png"
+            },
+            {
+                "type": "image",
+                "key": "victory",
+                "url": "./assets/popup/victory.png"
+            },
+            {
+                "type": "image",
+                "key": "overimg",
+                "url": "./assets/popup/over.png"
+            },
+            {
+                "type": "image",
+                "key": "congrat",
+                "url": "./assets/popup/congrat.png"
+            },
+            {
+                "type": "image",
+                "key": "newgame",
+                "url": "./assets/popup/newgame.png"
+            },
+            {
+                "type": "image",
+                "key": "exit",
+                "url": "./assets/popup/exit.png"
+            },
+            {
+                "type": "spritesheet",
+                "key": "blueFish",
+                "url": "./assets/sprites/blue_fish.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 76
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "yellowFish",
+                "url": "./assets/sprites/yellow_fish.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 76
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "redFish",
+                "url": "./assets/sprites/red_fish.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 76
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "greenFish",
+                "url": "./assets/sprites/green_fish.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 76
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "purpleFish",
+                "url": "./assets/sprites/purple_fish.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 76
+                }
+            }
+        ]
+    }
+}
