@@ -21,4 +21,8 @@ export class WeaponBody extends Phaser.GameObjects.Arc {
     public hitFish() {
         this.fish.killOtherFish()
     }
+
+    public getFishOwner() {
+        return this.fish
+    }
 }

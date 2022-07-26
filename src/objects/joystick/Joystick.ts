@@ -32,4 +32,8 @@ export class Joystick extends VirtualJoyStick {
         this.baseCircle.setAlpha(0.5)
         this.thumbCircle.setAlpha(0.5)
     }
+
+    public getIgnoreObjects() {
+        return [this.baseCircle, this.thumbCircle]
+    }
 }

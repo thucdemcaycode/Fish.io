@@ -245,11 +245,10 @@ export class OverMenu extends Phaser.Scene {
             duration: 250,
             ease: "Linear",
             onComplete: () => {
-                // this.scene.get("GameScene").events.off(Constants.EVENT_NEW_FISH)
-                // this.scene
-                //     .get("GameScene")
-                //     .events.off(Constants.EVENT_FISH_SCORE)
                 this.scene.stop()
+                this.scene
+                    .get("GameScene")
+                    .events.emit(Constants.EVENT_PLAYER_RESPAWN)
                 this.scene.resume("GameScene")
             }
         })
@@ -267,10 +266,7 @@ export class OverMenu extends Phaser.Scene {
             duration: 250,
             ease: "Linear",
             onComplete: () => {
-                this.scene.get("GameScene").events.off(Constants.EVENT_NEW_FISH)
-                this.scene
-                    .get("GameScene")
-                    .events.off(Constants.EVENT_FISH_SCORE)
+                this.removeGameSceneEvents()
                 this.scene.start("HUDScene")
                 this.scene.start("GameScene")
                 this.scene.bringToTop("HUDScene")
@@ -278,5 +274,12 @@ export class OverMenu extends Phaser.Scene {
             },
             delay: 100
         })
+    }
+
+    private removeGameSceneEvents() {
+        const gameScene = this.scene.get("GameScene")
+        gameScene.events.off(Constants.EVENT_NEW_FISH)
+        gameScene.events.off(Constants.EVENT_FISH_SCORE)
+        gameScene.events.off(Constants.EVENT_PLAYER_RESPAWN)
     }
 }

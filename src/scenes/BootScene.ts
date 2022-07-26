@@ -37,11 +37,6 @@ export class BootScene extends Phaser.Scene {
             this
         )
 
-        this.load.atlas(
-            "flares",
-            "assets/particles/flares.png",
-            "assets/particles/flares.json"
-        )
         this.load.script(
             "webfont",
             "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"
@@ -50,9 +45,7 @@ export class BootScene extends Phaser.Scene {
         this.load.pack("preload", "./assets/pack.json", "preload")
     }
     update(): void {
-        this.scene.start("HUDScene")
-        this.scene.start("GameScene")
-        this.scene.bringToTop("HUDScene")
+        this.scene.start("StartScene")
     }
     create() {}
     private createLoadingGraphics(): void {

@@ -22,8 +22,9 @@ export class Enemy extends Fish {
     }
 
     public getCollectible() {
+        this.updateRankingBoard()
         this.setFishSpeed(Constants.SPRINT_SPEED)
-        this.timeSprint = 2000
+        this.timeSprint = 800
     }
 
     public gotHit(): void {
@@ -61,9 +62,9 @@ export class Enemy extends Fish {
     }
 
     protected sprintRandom() {
-        if (Math.random() > 0.998 && this.timeSprint == 0) {
+        if (Math.random() > 0.9985 && this.timeSprint == 0) {
             this.setFishSpeed(Constants.SPRINT_SPEED)
-            this.timeSprint = 2000
+            this.timeSprint = 1000
         }
     }
 

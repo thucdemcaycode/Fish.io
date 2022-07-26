@@ -124,7 +124,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
     }
 
     public isVulnerable(): boolean {
-        return !this.shieldImage.active
+        return !this.shieldImage.active && this.visible
     }
 
     private createAnims(key: string) {
@@ -179,7 +179,6 @@ export class Fish extends Phaser.GameObjects.Sprite {
     public gotHit(): void {}
 
     public killOtherFish() {
-        this.score += 50
         this.updateRankingBoard()
 
         this.weapon.getFishHead()
@@ -190,7 +189,8 @@ export class Fish extends Phaser.GameObjects.Sprite {
         }
     }
 
-    private updateRankingBoard() {
+    protected updateRankingBoard() {
+        this.score += 50
         this.scene.events.emit(
             Constants.EVENT_FISH_SCORE,
             this.fishNameText.text,
@@ -203,5 +203,9 @@ export class Fish extends Phaser.GameObjects.Sprite {
             this.fishSize += 0.1
             this.setScale(this.fishSize)
         }
+    }
+
+    public getIgnoreObjects(): any {
+        return [this.fishNameText]
     }
 }

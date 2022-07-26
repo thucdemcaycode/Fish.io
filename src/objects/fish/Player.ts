@@ -97,6 +97,7 @@ export class Player extends Fish {
     }
 
     public getCollectible() {
+        this.updateRankingBoard()
         this.staminaBar.rechargeStamina()
     }
 
@@ -112,7 +113,7 @@ export class Player extends Fish {
             onComplete: () => {
                 this.weapon.destroy()
                 this.hideFish()
-                this.scene.scene.pause()
+                // this.scene.scene.pause()
                 this.scene.scene.launch("OverMenu")
             }
         })
@@ -150,5 +151,9 @@ export class Player extends Fish {
     private textNameRespawn() {
         this.fishNameText.setScale(1)
         this.fishNameText.setAlpha(1)
+    }
+
+    public getIgnoreObjects() {
+        return [this.fishNameText, this.staminaBar]
     }
 }

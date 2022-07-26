@@ -8,6 +8,8 @@ import { Fish } from "../objects/fish/Fish"
 import { WeaponBody } from "../objects/weapons/WeaponBody"
 import { NoobEnemy } from "../objects/fish/enemy/NoobEnemy"
 import { CollectEnemy } from "../objects/fish/enemy/CollectEnemy"
+import { HunterEnemy } from "../objects/fish/enemy/HunterEnemy"
+import { ChasingEnemy } from "../objects/fish/enemy/ChasingEnemy"
 
 export class GameScene extends Phaser.Scene {
     private background: Phaser.GameObjects.TileSprite
@@ -16,7 +18,10 @@ export class GameScene extends Phaser.Scene {
     private sprintButton: SprintButton
 
     private enemies: Phaser.GameObjects.Group
+    private fishes: Phaser.GameObjects.Group
     private collectibles: Phaser.GameObjects.Group
+
+    private minimap: Phaser.Cameras.Scene2D.Camera
 
     constructor() {
         super({
@@ -26,6 +31,8 @@ export class GameScene extends Phaser.Scene {
 
     create() {
         this.createBackground()
+
+        this.createMinimap()
 
         this.createGameButtons()
 
@@ -53,6 +60,8 @@ export class GameScene extends Phaser.Scene {
         )
         this.cameras.main.startFollow(this.player)
         // this.cameras.main.setZoom(0.5)
+
+        this.ignoreFromMinimap()
     }
 
     private createBackground() {
@@ -119,18 +128,43 @@ export class GameScene extends Phaser.Scene {
             let y = Phaser.Math.Between(70, height - 70)
 
             let texture = fishes[Math.floor(Math.random() * fishes.length)]
+            this.generateEnemy(x, y, texture)
+        }
+    }
 
+    private createMinimap() {
+        this.minimap = this.cameras
+            .add(10, 10, 150, 100)
+            .setZoom(0.18)
+            .setName("mini")
+
+        this.minimap.setBounds(
+            0,
+            0,
+            this.background.width,
+            this.background.height
+        )
+    }
+
+    private ignoreFromMinimap() {
+        this.minimap.startFollow(this.player)
+
+        this.minimap.ignore(this.joystick.getIgnoreObjects())
+        this.minimap.ignore(this.sprintButton)
+        this.minimap.ignore(this.player.getIgnoreObjects())
+        this.minimap.ignore(this.collectibles)
+    }
+
+    private generateEnemy = (x: number, y: number, texture: string) => {
+        let type = Math.random()
+        if (type < 0.2) {
             this.addNoobEnemy(x, y, texture)
-
-            // let type = Phaser.Math.Between(1, 2)
-            // switch (type) {
-            //     case 1:
-            //         this.addNoobEnemy(x, y, texture)
-            //         break
-            //     case 2:
-            //         this.addCollectEnemy(x, y, texture)
-            //         break
-            // }
+        } else if (type < 0.5) {
+            this.addCollectEnemy(x, y, texture)
+        } else if (type < 0.9) {
+            this.addChasingEnemy(x, y, texture)
+        } else if (type <= 1) {
+            this.addHunterEnemy(x, y, texture)
         }
     }
 
@@ -138,32 +172,50 @@ export class GameScene extends Phaser.Scene {
         const enemy = new CollectEnemy(
             {
                 scene: this,
-                x: this.player.x,
-                y: this.player.y,
+                x: x,
+                y: y,
                 texture: texture
             },
             this.collectibles
         )
         enemy.angle = Phaser.Math.Between(-180, 180)
+        // enemy.setTintFill(0xef5b0c)
 
-        this.physics.add.overlap(
-            enemy.getWeapon(),
-            this.player,
-            this.weaponHitFish,
-            undefined,
-            this
-        )
-
-        this.physics.add.overlap(
-            enemy.getWeapon(),
-            this.enemies,
-            this.weaponHitFish,
-            undefined,
-            this
-        )
-
-        this.enemies.add(enemy)
+        this.addEnemyCollider(enemy)
     }
+
+    private addHunterEnemy(x: number, y: number, texture: string) {
+        const enemy = new HunterEnemy(
+            {
+                scene: this,
+                x: x,
+                y: y,
+                texture: texture
+            },
+            this.player
+        )
+        enemy.angle = Phaser.Math.Between(-180, 180)
+        // enemy.setTintFill(0xffffff)
+
+        this.addEnemyCollider(enemy)
+    }
+
+    private addChasingEnemy(x: number, y: number, texture: string) {
+        const enemy = new ChasingEnemy(
+            {
+                scene: this,
+                x: x,
+                y: y,
+                texture: texture
+            },
+            this.fishes
+        )
+        enemy.angle = Phaser.Math.Between(-180, 180)
+        // enemy.setTintFill(0xb93160)
+
+        this.addEnemyCollider(enemy)
+    }
+
     private addNoobEnemy(x: number, y: number, texture: string) {
         const enemy = new NoobEnemy({
             scene: this,
@@ -173,6 +225,10 @@ export class GameScene extends Phaser.Scene {
         })
         enemy.angle = Phaser.Math.Between(-180, 180)
 
+        this.addEnemyCollider(enemy)
+    }
+
+    private addEnemyCollider = (enemy: Enemy) => {
         this.physics.add.overlap(
             enemy.getWeapon(),
             this.player,
@@ -190,6 +246,9 @@ export class GameScene extends Phaser.Scene {
         )
 
         this.enemies.add(enemy)
+        this.fishes.add(enemy)
+
+        this.minimap.ignore(enemy.getIgnoreObjects())
     }
 
     private inputHandler() {
@@ -202,8 +261,9 @@ export class GameScene extends Phaser.Scene {
             this.sprintButton.unPressDownEffect()
         })
     }
+
     private eventListener() {
-        this.events.on("resume", () => {
+        this.events.on(Constants.EVENT_PLAYER_RESPAWN, () => {
             this.player.fishRespawn()
             this.physics.add.overlap(
                 this.player.getWeapon(),
@@ -238,33 +298,9 @@ export class GameScene extends Phaser.Scene {
             )
         }
 
-        let textute = fishes[Math.floor(Math.random() * fishes.length)]
+        let texture = fishes[Math.floor(Math.random() * fishes.length)]
 
-        const enemy = new NoobEnemy({
-            scene: this,
-            x: x,
-            y: y,
-            texture: textute
-        })
-        enemy.angle = Phaser.Math.Between(-180, 180)
-
-        this.physics.add.overlap(
-            enemy.getWeapon(),
-            this.player,
-            this.weaponHitFish,
-            undefined,
-            this
-        )
-
-        this.physics.add.overlap(
-            enemy.getWeapon(),
-            this.enemies,
-            this.weaponHitFish,
-            undefined,
-            this
-        )
-
-        this.enemies.add(enemy)
+        this.generateEnemy(x, y, texture)
     }
 
     private createColliders() {
@@ -318,6 +354,9 @@ export class GameScene extends Phaser.Scene {
     }
 
     private createPlayer() {
+        this.fishes = this.add.group({
+            runChildUpdate: true
+        })
         const width = Constants.GAMEWORLD_WIDTH
         const height = Constants.GAMEWORLD_HEIGHT
 
@@ -330,7 +369,11 @@ export class GameScene extends Phaser.Scene {
 
         this.createPlayerControl()
 
-        this.player.setPlayerName("Phucdepzai")
+        const playerName = this.registry.get("playerName")
+
+        this.player.setPlayerName(playerName)
+
+        this.fishes.add(this.player)
     }
     private createPlayerControl() {
         this.player.addJoystick(this.joystick)
@@ -369,6 +412,8 @@ export class GameScene extends Phaser.Scene {
         if (!(fish instanceof Fish)) return
 
         if (!fish.isVulnerable()) return
+
+        if (fish == weapon.getFishOwner()) return
 
         weapon.hitFish()
         this.createCollectible(fish.x, fish.y)

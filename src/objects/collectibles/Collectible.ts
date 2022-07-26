@@ -7,6 +7,8 @@ export class Collectible extends Phaser.GameObjects.Image {
     private scaleTween: Phaser.Tweens.Tween
     private disappearTween: Phaser.Tweens.Tween
 
+    public isCollectable: boolean
+
     constructor(aParams: IImageConstructor) {
         super(
             aParams.scene,
@@ -24,6 +26,7 @@ export class Collectible extends Phaser.GameObjects.Image {
     private initSprite() {
         this.setOrigin(0.5, 0.5)
         this.initTween()
+        this.isCollectable = true
 
         // physics
         this.scene.physics.world.enable(this)
@@ -56,6 +59,7 @@ export class Collectible extends Phaser.GameObjects.Image {
     }
 
     public collect(): void {
+        this.isCollectable = false
         if (this.disappearTween) {
             this.disappearTween.stop()
         }
