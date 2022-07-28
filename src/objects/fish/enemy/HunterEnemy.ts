@@ -83,13 +83,13 @@ export class HunterEnemy extends Enemy {
         this.trackTarget()
     }
     private trackTarget() {
-        let angle = Phaser.Math.Angle.Between(
+        let targetRadian = Phaser.Math.Angle.Between(
             this.x,
             this.y,
             this.player.x,
             this.player.y
         )
-        this.rotation = angle
+        this.tweenRotateRadian(targetRadian)
     }
 
     private handleChasing() {
@@ -107,13 +107,13 @@ export class HunterEnemy extends Enemy {
         this.isRunning = true
         this.timeRunning = 10000
 
-        let angle = Phaser.Math.Angle.Between(
+        let targetRadian = Phaser.Math.Angle.Between(
             this.x,
             this.y,
             this.player.x,
             this.player.y
         )
-        this.rotation = -angle
+        this.tweenRotateRadian(-targetRadian)
     }
 
     private handleRunning() {
@@ -126,21 +126,23 @@ export class HunterEnemy extends Enemy {
     }
 
     protected handleHitWorldBound() {
+        if (this.isRotating) return
+
         if (this.x < 80) {
             let angle = Phaser.Math.Between(-50, 50)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initHunterPlayer()
         } else if (this.x > Constants.GAMEWORLD_WIDTH - 80) {
             let angle = Phaser.Math.Between(90, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initHunterPlayer()
         } else if (this.y < 80) {
             let angle = Phaser.Math.Between(0, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initHunterPlayer()
         } else if (this.y > Constants.GAMEWORLD_HEIGHT - 80) {
             let angle = Phaser.Math.Between(-180, 0)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initHunterPlayer()
         }
     }

@@ -13,11 +13,6 @@
             },
             {
                 "type": "image",
-                "key": "shortSword",
-                "url": "./assets/weapons/short_sword.png"
-            },
-            {
-                "type": "image",
                 "key": "meat",
                 "url": "./assets/images/meat.png"
             },
@@ -30,11 +25,6 @@
                 "type": "image",
                 "key": "shield",
                 "url": "./assets/images/shield.png"
-            },
-            {
-                "type": "image",
-                "key": "fishHead",
-                "url": "./assets/images/fishhead.png"
             },
             {
                 "type": "image",
@@ -75,6 +65,161 @@
                 "type": "image",
                 "key": "exit",
                 "url": "./assets/popup/exit.png"
+            },
+            {
+                "type": "image",
+                "key": "bubble",
+                "url": "./assets/particles/bubble.png"
+            },
+            {
+                "type": "image",
+                "key": "shortSword",
+                "url": "./assets/weapons/short_sword.png"
+            },
+            {
+                "type": "image",
+                "key": "longSword",
+                "url": "./assets/weapons/long_sword.png"
+            },
+            {
+                "type": "image",
+                "key": "spear1",
+                "url": "./assets/weapons/spear1.png"
+            },
+            {
+                "type": "image",
+                "key": "spear2",
+                "url": "./assets/weapons/spear2.png"
+            },
+            {
+                "type": "image",
+                "key": "katana1",
+                "url": "./assets/weapons/katana_1.png"
+            },
+            {
+                "type": "image",
+                "key": "katana2",
+                "url": "./assets/weapons/katana_2.png"
+            },
+            {
+                "type": "image",
+                "key": "katana3",
+                "url": "./assets/weapons/katana_3.png"
+            },
+            {
+                "type": "image",
+                "key": "blade1",
+                "url": "./assets/weapons/blade1.png"
+            },
+            {
+                "type": "image",
+                "key": "blade2",
+                "url": "./assets/weapons/blade2.png"
+            },
+            {
+                "type": "image",
+                "key": "blade3",
+                "url": "./assets/weapons/blade3.png"
+            },
+            {
+                "type": "image",
+                "key": "flame1",
+                "url": "./assets/weapons/flame1.png"
+            },
+            {
+                "type": "image",
+                "key": "flame2",
+                "url": "./assets/weapons/flame2.png"
+            },
+            {
+                "type": "image",
+                "key": "flame3",
+                "url": "./assets/weapons/flame3.png"
+            },
+            {
+                "type": "image",
+                "key": "ice1",
+                "url": "./assets/weapons/ice1.png"
+            },
+            {
+                "type": "image",
+                "key": "ice2",
+                "url": "./assets/weapons/ice2.png"
+            },
+            {
+                "type": "image",
+                "key": "fish1",
+                "url": "./assets/heads/fish1.png"
+            },
+            {
+                "type": "image",
+                "key": "fish2",
+                "url": "./assets/heads/fish2.png"
+            },
+            {
+                "type": "image",
+                "key": "fish3",
+                "url": "./assets/heads/fish3.png"
+            },
+            {
+                "type": "image",
+                "key": "fish4",
+                "url": "./assets/heads/fish4.png"
+            },
+            {
+                "type": "image",
+                "key": "fish5",
+                "url": "./assets/heads/fish5.png"
+            },
+            {
+                "type": "image",
+                "key": "fish6",
+                "url": "./assets/heads/fish6.png"
+            },
+            {
+                "type": "image",
+                "key": "fish7",
+                "url": "./assets/heads/fish7.png"
+            },
+            {
+                "type": "image",
+                "key": "fish8",
+                "url": "./assets/heads/fish8.png"
+            },
+            {
+                "type": "image",
+                "key": "fish9",
+                "url": "./assets/heads/fish9.png"
+            },
+            {
+                "type": "image",
+                "key": "fish10",
+                "url": "./assets/heads/fish10.png"
+            },
+            {
+                "type": "image",
+                "key": "fish11",
+                "url": "./assets/heads/fish11.png"
+            },
+            {
+                "type": "image",
+                "key": "fish12",
+                "url": "./assets/heads/fish12.png"
+            },
+            {
+                "type": "image",
+                "key": "fish13",
+                "url": "./assets/heads/fish13.png"
+            },
+            {
+                "type": "image",
+                "key": "fish14",
+                "url": "./assets/heads/fish14.png"
+            },
+            {
+                "type": "image",
+                "key": "fish15",
+                "url": "./assets/heads/fish15.png"
             },
             {
                 "type": "spritesheet",

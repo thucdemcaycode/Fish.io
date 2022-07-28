@@ -11,14 +11,54 @@ export const Constants = {
     STAMINA_HEIGHT: 20,
     STAMINA_CONSUME_QTY: 0.0025,
     FISH_ALIVE: 15,
-    FISH_TEXTTURE_KEY: [
+    FISH_TEXTURE_KEY: [
         "blueFish",
         "yellowFish",
         "redFish",
         "greenFish",
         "purpleFish"
     ],
+    FISH_HEAD_TEXTURE_KEY: [
+        "fish1",
+        "fish2",
+        "fish3",
+        "fish4",
+        "fish5",
+        "fish6",
+        "fish7",
+        "fish8",
+        "fish9",
+        "fish10",
+        "fish11",
+        "fish12",
+        "fish13",
+        "fish14",
+        "fish15"
+    ],
+    WEAPON_TEXTURE_KEY: [
+        "shortSword",
+        "longSword",
+        "spear1",
+        "spear2",
+        "katana1",
+        "katana2",
+        "katana3",
+        "blade1",
+        "blade2",
+        "blade3",
+        "flame1",
+        "flame2",
+        "flame3",
+        "ice1",
+        "ice2"
+    ],
     EVENT_NEW_FISH: "newFish",
     EVENT_FISH_SCORE: "fishScore",
-    EVENT_PLAYER_RESPAWN: "respawn"
+    EVENT_PLAYER_RESPAWN: "respawn",
+    EVENT_NEW_ENEMY: "newEnemy",
+    EVENT_FISH_KILL_FISH: "fishKillFish",
+    STAB_SOUND: "stab",
+    GET_STAB_SOUND: "getStab",
+    SWALLOW_SOUND: "swallow",
+    BUBBLE_SOUND: "bubble"
 }

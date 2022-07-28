@@ -9,6 +9,9 @@ export class Player extends Fish {
     private joystick: Joystick
 
     private staminaBar: StaminaBar
+    private bubbleSound: Phaser.Sound.BaseSound
+
+    private weaponKey: string
 
     constructor(aParams: ISpriteConstructor) {
         super(aParams)
@@ -20,6 +23,10 @@ export class Player extends Fish {
         this.setFishSpeed(Constants.NORMAL_SPEED)
 
         this.initStaminaBar()
+
+        this.bubbleSound = this.scene.sound.add(Constants.BUBBLE_SOUND, {
+            volume: 0.5
+        })
     }
 
     update(): void {
@@ -65,13 +72,21 @@ export class Player extends Fish {
     public sprintFish = () => {
         if (this.staminaBar.getStamina() > 0) {
             this.setFishSpeed(Constants.SPRINT_SPEED)
+            this.bubbleEmitter.visible = true
+
             if (this.joystick.force == 0) {
                 this.fishMoving()
+            }
+
+            if (!this.bubbleSound.isPlaying) {
+                this.bubbleSound.play()
             }
         }
     }
     public unSprintFish = () => {
         this.setFishSpeed(Constants.NORMAL_SPEED)
+        this.bubbleSound.stop()
+        this.bubbleEmitter.visible = false
         if (this.joystick.force == 0) {
             this.fishMoving()
         }
@@ -111,6 +126,7 @@ export class Player extends Fish {
             alpha: { from: 1, to: 0.2 },
             duration: 500,
             onComplete: () => {
+                this.weaponKey = this.weapon.getTextureKey()
                 this.weapon.destroy()
                 this.hideFish()
                 // this.scene.scene.pause()
@@ -120,10 +136,11 @@ export class Player extends Fish {
     }
 
     private hideFish() {
-        this.initWeapon()
+        this.initWeapon(this.weaponKey)
         this.fishNameText.visible = false
         this.visible = false
         this.weapon.visible = false
+        this.bubbleEmitter.visible = false
     }
 
     public fishRespawn() {

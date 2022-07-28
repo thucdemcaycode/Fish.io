@@ -1,3 +1,4 @@
+import { Constants } from "../../helpers/Contants"
 import { IWeaponConstructor } from "../../interfaces/IWeaponConstructor"
 import { Fish } from "../fish/Fish"
 import { FishHead } from "../fish/FishHead"
@@ -7,7 +8,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
     private display: Phaser.GameObjects.Image
     private topPhysicsObject: WeaponBody
     private fish: Fish
-    private weaponBodyGroup: WeaponBody[]
+    private weaponBodyGroup: Phaser.GameObjects.Group
 
     private countFishHead: number
     private lastHeadX: number
@@ -53,7 +54,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
         body.setCircle(20)
         body.setSize(15, 15)
 
-        this.weaponBodyGroup.push(this.topPhysicsObject)
+        this.weaponBodyGroup.add(this.topPhysicsObject)
     }
 
     private initVaiables() {
@@ -61,7 +62,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
         this.lastHeadX = 45
         this.weaponSize = 0.7
         this.fishHeads = this.scene.add.group({})
-        this.weaponBodyGroup = []
+        this.weaponBodyGroup = this.scene.add.group({ runChildUpdate: true })
     }
 
     update(x: number, y: number, rotation: number): void {
@@ -69,26 +70,49 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
         this.y = y
         this.rotation = rotation
 
-        this.handleFishHeadRotation()
+        this.handleWeaponRotate(this.angle)
     }
 
-    private handleFishHeadRotation() {
+    private handleFishHeadRotation(isFliped: boolean) {
         this.fishHeads.children.each((head: any) => {
-            head.rotate(this.angle)
+            head.setFlipY(isFliped)
         })
+    }
+
+    private handleWeaponRotate(angle: number): void {
+        const onCircle1 = angle >= -90 && angle <= 0
+        const onCircle2 = angle > 0 && angle <= 90
+        const onCircle3 = angle > 90 && angle <= 180
+        const onCircle4 = angle >= -180 && angle < -90
+
+        if (onCircle1 || onCircle2) {
+            this.display.setFlipY(false)
+            this.handleFishHeadRotation(false)
+        }
+
+        if (onCircle3 || onCircle4) {
+            this.display.setFlipY(true)
+            this.handleFishHeadRotation(true)
+        }
     }
 
     public getFishHead() {
         if (this.countFishHead < 3) {
             this.countFishHead += 1
             const headSize = 15 * (1 + this.weaponSize / 3.5)
+
+            const fishHeadKeys = Constants.FISH_HEAD_TEXTURE_KEY
+
+            let headKey =
+                fishHeadKeys[Math.floor(Math.random() * fishHeadKeys.length)]
+
             const fishHead = new FishHead({
                 scene: this.scene,
                 x: this.lastHeadX,
                 y: 0,
                 width: headSize,
                 height: headSize,
-                texture: "fishHead"
+                texture: headKey
             })
 
             this.lastHeadX += 15 * (1 + this.weaponSize / 2.5)
@@ -100,6 +124,8 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
             this.lastHeadX = 45 + this.display.x / 4
             if (this.weaponSize > 0.9) {
                 this.lastHeadX = 45 + this.display.x * 0.8
+            } else if (this.weaponSize > 1.1) {
+                this.lastHeadX = 45 + this.display.x * 0.7
             }
             this.upgradeWeapon()
         }
@@ -143,7 +169,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
         this.scene.physics.add.existing(newPhysiscBody)
 
         this.add(newPhysiscBody)
-        this.weaponBodyGroup.push(newPhysiscBody)
+        this.weaponBodyGroup.add(newPhysiscBody)
 
         const bodyWidth = 15 * (1 + this.weaponSize / 1.5)
         const bodyHeight = 15 * (1 + this.weaponSize / 2.5)
@@ -157,15 +183,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
         return this.weaponBodyGroup
     }
 
-    // public reset() {
-    //     this.fishHeads.clear(true, true)
-    //     this.display.setScale(0.7)
-    //     // this.display.x += this.width * 0.35
-
-    //     this.weaponBodyGroup.forEach((weaponBody) => {
-    //         weaponBody.destroy()
-    //     })
-    //     this.initVaiables()
-    //     this.createBody()
-    // }
+    public getTextureKey() {
+        return this.display.texture.key
+    }
 }

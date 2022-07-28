@@ -69,36 +69,38 @@ export class CollectEnemy extends Enemy {
         if (distance < 10) {
             this.isChasing = false
             this.targetPosition = []
-            this.angle *= -1
+            this.tweenRotate(-this.angle)
         }
     }
 
     private trackTarget() {
-        let angle = Phaser.Math.Angle.Between(
+        let targetRadian = Phaser.Math.Angle.Between(
             this.x,
             this.y,
             this.targetPosition[0],
             this.targetPosition[1]
         )
-        this.rotation = angle
+        this.tweenRotateRadian(targetRadian)
     }
 
     protected handleHitWorldBound() {
+        if (this.isRotating) return
+
         if (this.x < 80) {
             let angle = Phaser.Math.Between(-50, 50)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initCollectEnemy()
         } else if (this.x > Constants.GAMEWORLD_WIDTH - 80) {
             let angle = Phaser.Math.Between(90, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initCollectEnemy()
         } else if (this.y < 80) {
             let angle = Phaser.Math.Between(0, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initCollectEnemy()
         } else if (this.y > Constants.GAMEWORLD_HEIGHT - 80) {
             let angle = Phaser.Math.Between(-180, 0)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initCollectEnemy()
         }
     }

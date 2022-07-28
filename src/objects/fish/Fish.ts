@@ -13,9 +13,12 @@ export class Fish extends Phaser.GameObjects.Sprite {
     private speed: number
     protected fishSize: number
     protected score: number
+    protected numberOfKilling: number
 
     protected fishNameText: Phaser.GameObjects.Text
     protected shieldImage: Phaser.GameObjects.Image
+
+    protected bubbleEmitter: Phaser.GameObjects.Particles.ParticleEmitter
 
     protected countKillFish: number
 
@@ -46,6 +49,8 @@ export class Fish extends Phaser.GameObjects.Sprite {
 
         this.initFishNameText()
 
+        this.createParEmitter()
+
         this.addFishToRankBoard()
 
         this.setScale(this.fishSize)
@@ -63,14 +68,22 @@ export class Fish extends Phaser.GameObjects.Sprite {
         this.countKillFish = 0
         this.fishSize = 0.7
         this.score = 0
+        this.numberOfKilling = 0
     }
 
-    protected initWeapon() {
+    protected initWeapon(key?: string) {
+        const weaponKeys = Constants.WEAPON_TEXTURE_KEY
+        let weaponKey =
+            weaponKeys[Math.floor(Math.random() * weaponKeys.length)]
+        if (key) {
+            weaponKey = key
+        }
+
         this.weapon = new WeaponContainer({
             scene: this.scene,
             x: this.x + 50,
             y: this.y,
-            texture: "shortSword",
+            texture: weaponKey,
             fish: this
         })
     }
@@ -115,10 +128,21 @@ export class Fish extends Phaser.GameObjects.Sprite {
         this.fishNameText.setDepth(3)
     }
 
+    private createParEmitter() {
+        this.bubbleEmitter = this.scene.add.particles("bubble").createEmitter({
+            alpha: { start: 0.1, end: 1 },
+            scale: { start: 0.1, end: 1, ease: Phaser.Math.Easing.Quintic.Out },
+            lifespan: 500,
+            speed: 80,
+            follow: this
+        })
+        this.bubbleEmitter.visible = false
+    }
+
     private addFishToRankBoard() {
         this.scene.events.emit(
             Constants.EVENT_NEW_FISH,
-            this.fishNameText.text,
+            this.getFishName(),
             this.score
         )
     }
@@ -170,16 +194,15 @@ export class Fish extends Phaser.GameObjects.Sprite {
         }
     }
 
-    public getWeapon(): WeaponBody[] {
+    public getWeapon(): Phaser.GameObjects.Group {
         return this.weapon.getPhysicsBodyGroup()
     }
-
-    public growFish(): void {}
 
     public gotHit(): void {}
 
     public killOtherFish() {
         this.updateRankingBoard()
+        this.numberOfKilling += 1
 
         this.weapon.getFishHead()
         this.countKillFish += 1
@@ -193,7 +216,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
         this.score += 50
         this.scene.events.emit(
             Constants.EVENT_FISH_SCORE,
-            this.fishNameText.text,
+            this.getFishName(),
             this.score
         )
     }
@@ -207,5 +230,9 @@ export class Fish extends Phaser.GameObjects.Sprite {
 
     public getIgnoreObjects(): any {
         return [this.fishNameText]
+    }
+
+    public getFishName() {
+        return this.fishNameText.text
     }
 }

@@ -77,6 +77,8 @@ export class ChasingEnemy extends Enemy {
                 let distance = calDistance(this.x, this.y, fish.x, fish.y)
 
                 if (distance < 300 && distance < currentDistance) {
+                    if (this.isRotating) return
+
                     this.isChasing = true
                     this.timeChasing = 3000
                     this.targetFish = fish
@@ -108,13 +110,13 @@ export class ChasingEnemy extends Enemy {
     }
     private trackTarget() {
         if (this.targetFish != undefined) {
-            let angle = Phaser.Math.Angle.Between(
+            let targetRadian = Phaser.Math.Angle.Between(
                 this.x,
                 this.y,
                 this.targetFish.x,
                 this.targetFish.y
             )
-            this.rotation = angle
+            this.tweenRotateRadian(targetRadian)
         }
     }
 
@@ -140,25 +142,27 @@ export class ChasingEnemy extends Enemy {
         this.isRunning = true
         this.timeRunning = 1000
 
-        this.angle = -this.angle
+        this.tweenRotate(-this.angle)
     }
 
     protected handleHitWorldBound() {
+        if (this.isRotating) return
+
         if (this.x < 80) {
             let angle = Phaser.Math.Between(-50, 50)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initChasingEnemy()
         } else if (this.x > Constants.GAMEWORLD_WIDTH - 80) {
             let angle = Phaser.Math.Between(90, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initChasingEnemy()
         } else if (this.y < 80) {
             let angle = Phaser.Math.Between(0, 180)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initChasingEnemy()
         } else if (this.y > Constants.GAMEWORLD_HEIGHT - 80) {
             let angle = Phaser.Math.Between(-180, 0)
-            this.angle = angle
+            this.tweenRotate(angle)
             this.initChasingEnemy()
         }
     }

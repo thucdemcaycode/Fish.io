@@ -17,6 +17,8 @@ export class HUDScene extends Phaser.Scene {
     create(): void {
         this.createTexts()
 
+        this.decorateBoard()
+
         this.createVariables()
 
         this.eventListener()
@@ -35,6 +37,42 @@ export class HUDScene extends Phaser.Scene {
             ["NAME5", this.addText(630, 105, "5. Top 1 server")],
             ["SCORE5", this.addText(790, 105, "100")]
         ])
+    }
+
+    private decorateBoard() {
+        this.decorateFirstRank()
+        this.decorateSecondRank()
+        this.decorateThirdRank()
+    }
+
+    private decorateFirstRank() {
+        const firstRankName = this.textElements.get("NAME1")
+        const firstRankScore = this.textElements.get("SCORE1")
+
+        firstRankName?.setColor("#FFF80A")
+        firstRankName?.setFontSize(23)
+        firstRankScore?.setColor("#FFF80A")
+        firstRankScore?.setFontSize(23)
+    }
+
+    private decorateSecondRank() {
+        const secondRankName = this.textElements.get("NAME2")
+        const secondRankScore = this.textElements.get("SCORE2")
+
+        secondRankName?.setColor("#B2A4FF")
+        secondRankName?.setFontSize(22)
+        secondRankScore?.setColor("#B2A4FF")
+        secondRankScore?.setFontSize(22)
+    }
+
+    private decorateThirdRank() {
+        const thirdRankName = this.textElements.get("NAME3")
+        const thirdRankScore = this.textElements.get("SCORE3")
+
+        thirdRankName?.setColor("#CA955C")
+        thirdRankName?.setFontSize(21)
+        thirdRankScore?.setColor("#CA955C")
+        thirdRankScore?.setFontSize(21)
     }
 
     private createVariables() {
@@ -58,6 +96,7 @@ export class HUDScene extends Phaser.Scene {
 
         game.events.on(Constants.EVENT_NEW_FISH, this.addNewFish, this)
         game.events.on(Constants.EVENT_FISH_SCORE, this.checkFishScore, this)
+        // game.events.on(Constants.EVENT_FISH_KILL_FISH, this.showFishName, this)
     }
 
     private addNewFish(name: string, score: number) {
@@ -78,6 +117,8 @@ export class HUDScene extends Phaser.Scene {
         fishes.sort(function (first: any, second: any) {
             return second[1] - first[1]
         })
+
+        if (fishes.length < 5) return
 
         this.leaders = fishes
 
@@ -121,5 +162,28 @@ export class HUDScene extends Phaser.Scene {
             // @ts-ignore
             this.textElements.get(score).setText(scoreText)
         }
+    }
+
+    private showFishName = (fish: string, fishKilled: string) => {
+        let content = fish + " killed " + fishKilled
+        const text = this.add.text(635, 200, content, {
+            fontSize: "15px",
+            fontFamily: "Revalia",
+            align: "center",
+            stroke: "#000000",
+            strokeThickness: 2
+        })
+
+        this.tweens.add({
+            targets: text,
+            alpha: { from: 1, to: 0.5 },
+            y: 140,
+            duration: 1500,
+            ease: "Power0",
+            yoyo: false,
+            onComplete: () => {
+                text.destroy()
+            }
+        })
     }
 }

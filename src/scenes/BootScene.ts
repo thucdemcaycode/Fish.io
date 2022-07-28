@@ -42,6 +42,11 @@ export class BootScene extends Phaser.Scene {
             "https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"
         )
 
+        this.load.audio("stab", "./assets/sounds/stab.mp3")
+        this.load.audio("getStab", "./assets/sounds/get_stab.mp3")
+        this.load.audio("swallow", "./assets/sounds/swallow.mp3")
+        this.load.audio("bubble", "./assets/sounds/bubble.mp3")
+
         this.load.pack("preload", "./assets/pack.json", "preload")
     }
     update(): void {
