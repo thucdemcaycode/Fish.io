@@ -11,7 +11,8 @@ export class Player extends Fish {
     private staminaBar: StaminaBar
     private bubbleSound: Phaser.Sound.BaseSound
 
-    private weaponKey: string
+    private weaponScale: number
+    private fishScale: number
 
     constructor(aParams: ISpriteConstructor) {
         super(aParams)
@@ -111,14 +112,19 @@ export class Player extends Fish {
         }
     }
 
-    public getCollectible() {
-        this.updateRankingBoard()
-        this.staminaBar.rechargeStamina()
+    public getCollectible(value: number) {
+        this.updateRankingBoard(Constants.GET_ITEM_SCORE)
+        this.staminaBar.rechargeStamina(value)
     }
 
     public gotHit(): void {
         this.scene.physics.world.disable(this)
         this.scene.physics.world.disable(this.weapon.getPhysicsBodyGroup())
+
+        this.fishScale = this.scale
+        this.weaponScale = this.weapon.scale
+
+        this.setTimeScaleSlowMotion()
 
         this.scene.tweens.add({
             targets: [this, this.weapon, this.fishNameText],
@@ -126,17 +132,43 @@ export class Player extends Fish {
             alpha: { from: 1, to: 0.2 },
             duration: 500,
             onComplete: () => {
-                this.weaponKey = this.weapon.getTextureKey()
-                this.weapon.destroy()
+                this.resetTimeScale()
                 this.hideFish()
-                // this.scene.scene.pause()
+                this.scene.registry.set("status", Constants.STATUS_WAITING)
                 this.scene.scene.launch("OverMenu")
             }
         })
     }
 
+    private setTimeScaleSlowMotion() {
+        this.scene.tweens.timeScale = 0.5
+        this.scene.physics.world.timeScale = 3
+        this.scene.time.timeScale = 0.5
+    }
+
+    private resetTimeScale() {
+        this.scene.tweens.timeScale = 1
+        this.scene.physics.world.timeScale = 1
+        this.scene.time.timeScale = 1
+    }
+
+    protected updateRankingBoard(score: number) {
+        this.score += score
+        this.scene.events.emit(
+            Constants.EVENT_FISH_SCORE,
+            this.getFishName(),
+            this.score
+        )
+
+        this.updatePlayerGlobal()
+    }
+
+    private updatePlayerGlobal() {
+        this.scene.registry.set("playerKill", this.numberOfKilling)
+        this.scene.registry.set("playerScore", this.score)
+    }
+
     private hideFish() {
-        this.initWeapon(this.weaponKey)
         this.fishNameText.visible = false
         this.visible = false
         this.weapon.visible = false
@@ -149,18 +181,17 @@ export class Player extends Fish {
         this.visible = true
         this.weapon.visible = true
         this.scene.physics.world.enable(this)
-
-        this.countKillFish = 0
-        this.fishSize = 0.7
+        this.scene.physics.world.enable(this.weapon.getPhysicsBodyGroup())
 
         this.scene.tweens.add({
-            targets: [this, this.fishNameText],
+            targets: [this, this.weapon, this.fishNameText],
             scale: { from: 0.2, to: 0.7 },
             alpha: { from: 0.2, to: 0.5 },
             duration: 500,
             onComplete: () => {
                 this.textNameRespawn()
                 this.activeShield()
+                this.weaponRespawn()
             }
         })
     }
@@ -168,6 +199,12 @@ export class Player extends Fish {
     private textNameRespawn() {
         this.fishNameText.setScale(1)
         this.fishNameText.setAlpha(1)
+    }
+
+    private weaponRespawn() {
+        this.weapon.setScale(this.weaponScale)
+        this.weapon.setAlpha(1)
+        this.setScale(this.fishScale)
     }
 
     public getIgnoreObjects() {

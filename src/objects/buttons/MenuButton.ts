@@ -27,11 +27,11 @@ export class MenuButton extends Phaser.GameObjects.Image {
 
         this.on("pointerout", () => {
             this.clearTint()
-            this.setScale(0.4)
+            this.setScale(1)
         })
 
         this.on("pointerdown", () => {
-            this.setScale(0.5)
+            this.setScale(1.1)
         })
     }
 

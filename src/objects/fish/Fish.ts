@@ -124,8 +124,17 @@ export class Fish extends Phaser.GameObjects.Sprite {
         })
 
         this.fishNameText.setOrigin(0.5, 0.5)
-        this.fishNameText.setText(getRandomName())
         this.fishNameText.setDepth(3)
+        this.generateFishName()
+    }
+
+    private generateFishName() {
+        const playerName = this.scene.registry.get("playerName")
+        let fishName = getRandomName()
+        while (fishName == playerName) {
+            fishName = getRandomName()
+        }
+        this.fishNameText.setText(fishName)
     }
 
     private createParEmitter() {
@@ -201,7 +210,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
     public gotHit(): void {}
 
     public killOtherFish() {
-        this.updateRankingBoard()
+        this.updateRankingBoard(Constants.KILLING_SCORE)
         this.numberOfKilling += 1
 
         this.weapon.getFishHead()
@@ -212,8 +221,8 @@ export class Fish extends Phaser.GameObjects.Sprite {
         }
     }
 
-    protected updateRankingBoard() {
-        this.score += 50
+    protected updateRankingBoard(score: number) {
+        this.score += score
         this.scene.events.emit(
             Constants.EVENT_FISH_SCORE,
             this.getFishName(),

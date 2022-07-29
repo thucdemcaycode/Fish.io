@@ -8,6 +8,9 @@ export class StartScene extends Phaser.Scene {
             key: "StartScene"
         })
     }
+    init() {
+        this.initGlobalDataManager()
+    }
 
     preload(): void {
         this.load.html("nameform", "./assets/text/nameform.html")
@@ -17,6 +20,13 @@ export class StartScene extends Phaser.Scene {
         this.createDom()
     }
     update(): void {}
+
+    private initGlobalDataManager(): void {
+        this.registry.set("time", Constants.TIME_PER_MATCH)
+        this.registry.set("playerKill", 0)
+        this.registry.set("playerScore", 0)
+        this.registry.set("status", Constants.STATUS_PLAYING)
+    }
 
     private createBackground() {
         const width = Constants.GAMEWORLD_WIDTH

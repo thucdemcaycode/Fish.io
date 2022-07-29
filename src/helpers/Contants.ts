@@ -11,6 +11,9 @@ export const Constants = {
     STAMINA_HEIGHT: 20,
     STAMINA_CONSUME_QTY: 0.0025,
     FISH_ALIVE: 15,
+    KILLING_SCORE: 50,
+    GET_ITEM_SCORE: 20,
+    TIME_PER_MATCH: 120,
     FISH_TEXTURE_KEY: [
         "blueFish",
         "yellowFish",
@@ -60,5 +63,16 @@ export const Constants = {
     STAB_SOUND: "stab",
     GET_STAB_SOUND: "getStab",
     SWALLOW_SOUND: "swallow",
-    BUBBLE_SOUND: "bubble"
+    BUBBLE_SOUND: "bubble",
+    FISH_DIE_SOUND: "fishDie",
+    START_GAME_SOUND: "startGameMusic",
+    GAME_SCENE: "GameScene",
+    OVER_SCENE: "OverMenu",
+    START_SCENE: "StartScene",
+    HUD_SCENE: "HUDScene",
+    STATUS_PLAYING: "playing",
+    STATUS_WAITING: "waiting",
+    STATUS_TIMEOUT: "timeout",
+    SMALL_ITEM_VALUE: 0.025,
+    BIG_ITEM_VALUE: 0.1
 }

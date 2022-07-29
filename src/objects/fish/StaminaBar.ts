@@ -50,8 +50,8 @@ export class StaminaBar extends Phaser.GameObjects.Graphics {
         return this.stamina
     }
 
-    public rechargeStamina() {
-        this.stamina = this.stamina + 0.1
+    public rechargeStamina(value: number) {
+        this.stamina = this.stamina + value
         if (this.stamina > 1) {
             this.stamina = 1
         }

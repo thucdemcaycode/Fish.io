@@ -23,6 +23,12 @@ export class GameScene extends Phaser.Scene {
         })
     }
 
+    init() {
+        this.sound.play(Constants.START_GAME_SOUND, {
+            volume: 0.6
+        })
+    }
+
     create() {
         this.createBackground()
 
@@ -135,7 +141,8 @@ export class GameScene extends Phaser.Scene {
                 scene: this,
                 x: x,
                 y: y,
-                texture: "meat2"
+                texture: "energy",
+                value: Constants.SMALL_ITEM_VALUE
             })
 
             this.collectibles.add(newCollectible)
@@ -242,6 +249,7 @@ export class GameScene extends Phaser.Scene {
     }
 
     private addPlayerCollider = () => {
+        this.registry.set("status", Constants.STATUS_PLAYING)
         this.player.fishRespawn()
         this.physics.add.overlap(
             this.player.getWeapon(),
@@ -297,12 +305,14 @@ export class GameScene extends Phaser.Scene {
         if (!(player instanceof Player)) return
         if (!(collectible instanceof Collectible)) return
 
+        if (!collectible.canCollect()) return
+
         this.sound.play(Constants.SWALLOW_SOUND, {
-            volume: 0.5
+            volume: 0.6
         })
 
+        player.getCollectible(collectible.getValue())
         collectible.collect()
-        player.getCollectible()
     }
 
     private enemyHitCollectible = (
@@ -311,6 +321,8 @@ export class GameScene extends Phaser.Scene {
     ) => {
         if (!(enemy instanceof Enemy)) return
         if (!(collectible instanceof Collectible)) return
+
+        if (!collectible.canCollect()) return
 
         collectible.collect()
         enemy.getCollectible()
@@ -348,17 +360,27 @@ export class GameScene extends Phaser.Scene {
     }
 
     private createCollectible = (x: number, y: number) => {
-        this.time.delayedCall(700, () => {
-            const newCollectible = new Collectible({
+        this.time.delayedCall(300, () => {
+            const meat1 = new Collectible({
                 scene: this,
                 x: x,
                 y: y,
-                texture: "meat"
+                texture: "meat",
+                value: Constants.BIG_ITEM_VALUE
+            })
+            const meat2 = new Collectible({
+                scene: this,
+                x: x,
+                y: y,
+                texture: "meat2",
+                value: Constants.BIG_ITEM_VALUE
             })
 
-            newCollectible.disappearCollectible()
+            meat1.disappearCollectible()
+            meat2.disappearCollectible()
 
-            this.collectibles.add(newCollectible)
+            this.collectibles.add(meat1)
+            this.collectibles.add(meat2)
         })
 
         if (Math.random() > 0.8) {
@@ -376,7 +398,8 @@ export class GameScene extends Phaser.Scene {
             scene: this,
             x: x,
             y: y,
-            texture: "meat2"
+            texture: "energy",
+            value: Constants.SMALL_ITEM_VALUE
         })
 
         this.collectibles.add(newCollectible)
@@ -387,6 +410,9 @@ export class GameScene extends Phaser.Scene {
             this.sound.play(Constants.STAB_SOUND)
         } else if (fishGetStab instanceof Player) {
             this.sound.play(Constants.GET_STAB_SOUND)
+            this.sound.play(Constants.FISH_DIE_SOUND, {
+                volume: 0.5
+            })
         }
     }
 

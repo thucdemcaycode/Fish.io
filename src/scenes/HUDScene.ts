@@ -8,6 +8,10 @@ export class HUDScene extends Phaser.Scene {
     private rankingBoard: { [key: string]: number }
     private leaders: (string | number)[][]
 
+    private timer: Phaser.Time.TimerEvent
+    private playerKill: number
+    private playerScore: number
+
     constructor() {
         super({
             key: "HUDScene"
@@ -22,6 +26,8 @@ export class HUDScene extends Phaser.Scene {
         this.createVariables()
 
         this.eventListener()
+
+        this.createTimer()
     }
 
     private createTexts() {
@@ -35,14 +41,68 @@ export class HUDScene extends Phaser.Scene {
             ["NAME4", this.addText(630, 80, "4. Top 1 server")],
             ["SCORE4", this.addText(790, 80, "200")],
             ["NAME5", this.addText(630, 105, "5. Top 1 server")],
-            ["SCORE5", this.addText(790, 105, "100")]
+            ["SCORE5", this.addText(790, 105, "100")],
+            ["TIME", this.addText(80, 15, "")],
+            ["KILLED", this.addText(80, 40, "Killed: 0")],
+            ["SCORE", this.addText(80, 60, "Score: 0")]
         ])
+    }
+
+    private createTimer() {
+        this.timer = this.time.addEvent({
+            delay: 1000,
+            callback: this.updateTime,
+            callbackScope: this,
+            loop: true
+        })
+    }
+
+    private updateTime() {
+        if (this.registry.values.time == 0) {
+            this.gameTimeOut()
+            return
+        }
+
+        this.registry.values.time -= 1
+        let time = this.registry.values.time
+
+        let minutes = Math.floor(time / 60)
+        let seconds = time - minutes * 60
+        let secondText: string
+        if (seconds < 10) {
+            secondText = "0" + seconds
+        } else {
+            secondText = seconds.toString()
+        }
+
+        this.textElements
+            .get("TIME")
+            ?.setText(`Time left: ${minutes}:${secondText}`)
+    }
+
+    private gameTimeOut() {
+        this.timer.destroy()
+        const currentStatus = this.registry.get("status")
+        this.registry.set("status", "timeout")
+
+        // if(currentStatus==Constants.STATUS_WAITING){
+
+        // }else{
+
+        // }
+
+        const gameScene = this.scene.get(Constants.GAME_SCENE)
+        gameScene.scene.pause()
+        this.scene.pause()
+        this.scene.launch(Constants.OVER_SCENE)
     }
 
     private decorateBoard() {
         this.decorateFirstRank()
         this.decorateSecondRank()
         this.decorateThirdRank()
+        this.decorateTimeText()
+        this.decoratePlayerText()
     }
 
     private decorateFirstRank() {
@@ -75,9 +135,43 @@ export class HUDScene extends Phaser.Scene {
         thirdRankScore?.setFontSize(21)
     }
 
+    private decorateTimeText() {
+        const timeText = this.textElements.get("TIME")
+
+        timeText?.setColor("#7DCE13")
+        timeText?.setPosition(55, 15)
+
+        let time = Constants.TIME_PER_MATCH
+
+        let minutes = Math.floor(time / 60)
+        let seconds = time - minutes * 60
+        let secondText: string
+        if (seconds < 10) {
+            secondText = "0" + seconds
+        } else {
+            secondText = seconds.toString()
+        }
+
+        timeText?.setText(`Time left: ${minutes}:${secondText}`)
+    }
+
+    private decoratePlayerText() {
+        const killText = this.textElements.get("KILLED")
+
+        killText?.setColor("#F4E06D")
+        killText?.setPosition(55, 40)
+
+        const scoreText = this.textElements.get("SCORE")
+
+        scoreText?.setColor("#F6FBF4")
+        scoreText?.setPosition(55, 65)
+    }
+
     private createVariables() {
         this.rankingBoard = {}
         this.totalFish = 0
+        this.playerKill = 0
+        this.playerScore = 0
     }
 
     private addText(x: number, y: number, value: string) {
@@ -96,6 +190,7 @@ export class HUDScene extends Phaser.Scene {
 
         game.events.on(Constants.EVENT_NEW_FISH, this.addNewFish, this)
         game.events.on(Constants.EVENT_FISH_SCORE, this.checkFishScore, this)
+
         // game.events.on(Constants.EVENT_FISH_KILL_FISH, this.showFishName, this)
     }
 
@@ -132,8 +227,25 @@ export class HUDScene extends Phaser.Scene {
         }
     }
 
+    private updatePlayerText() {
+        let currentKill = this.registry.get("playerKill")
+        if (currentKill != this.playerKill) {
+            this.textElements.get("KILLED")?.setText(`Killed: ${currentKill}`)
+            this.playerKill = currentKill
+        }
+
+        let currentScore = this.registry.get("playerScore")
+        if (currentScore != this.playerScore) {
+            this.textElements.get("SCORE")?.setText(`Score: ${currentScore}`)
+            this.playerScore = currentScore
+        }
+    }
+
     private checkFishScore(name: string, score: number) {
         this.rankingBoard[name] = score
+        if (this.leaders.length < 5) {
+            return
+        }
         if (score > this.leaders[4][1]) {
             this.updateBoard()
         }
@@ -185,5 +297,9 @@ export class HUDScene extends Phaser.Scene {
                 text.destroy()
             }
         })
+    }
+
+    update(time: number, delta: number): void {
+        this.updatePlayerText()
     }
 }

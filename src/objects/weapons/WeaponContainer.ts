@@ -114,6 +114,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
                 height: headSize,
                 texture: headKey
             })
+            fishHead.setScale(fishHead.scale + (this.weaponSize - 0.7))
 
             this.lastHeadX += 15 * (1 + this.weaponSize / 2.5)
             this.add(fishHead)
@@ -125,7 +126,7 @@ export class WeaponContainer extends Phaser.GameObjects.Container {
             if (this.weaponSize > 0.9) {
                 this.lastHeadX = 45 + this.display.x * 0.8
             } else if (this.weaponSize > 1.1) {
-                this.lastHeadX = 45 + this.display.x * 0.7
+                this.lastHeadX = 45 + this.display.x * 0.5
             }
             this.upgradeWeapon()
         }

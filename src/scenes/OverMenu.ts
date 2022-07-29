@@ -4,8 +4,8 @@ import { MenuButton } from "../objects/buttons/MenuButton"
 export class OverMenu extends Phaser.Scene {
     private background: Phaser.GameObjects.Image
     private over: Phaser.GameObjects.Image
-    private restartButton: MenuButton
-    private exitButton: MenuButton
+    private respawnButton: MenuButton
+    private newGameButton: MenuButton
     private scoreImg: Phaser.GameObjects.Image
     private scoreText: Phaser.GameObjects.Text
     private highScoreImg: Phaser.GameObjects.Image
@@ -28,6 +28,8 @@ export class OverMenu extends Phaser.Scene {
 
         this.createContainer()
 
+        this.checkGameStatus()
+
         this.inputHandler()
     }
 
@@ -46,41 +48,41 @@ export class OverMenu extends Phaser.Scene {
         // this.createMessage()
 
         // this.scoreImg = this.add.image(-150, -65, "score").setScale(0.4)
-        // this.scoreText = this.add
-        //     .text(0, -70, "", {
-        //         fontSize: "40px",
-        //         fontFamily: "Revalia",
-        //         align: "center",
-        //         stroke: "#000000",
-        //         strokeThickness: 2
-        //     })
-        //     .setAlign("center")
-        //     .setOrigin(0.5, 0.5)
+        this.scoreText = this.add
+            .text(-60, -40, "Respawn?", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
 
         // this.highScoreImg = this.add.image(-150, 80, "high").setScale(0.4)
-        // this.highScoreText = this.add
-        //     .text(0, 75, "", {
-        //         fontSize: "40px",
-        //         fontFamily: "Revalia",
-        //         align: "center",
-        //         stroke: "#000000",
-        //         strokeThickness: 2
-        //     })
-        //     .setAlign("center")
-        //     .setOrigin(0.5, 0.5)
+        this.highScoreText = this.add
+            .text(-60, 50, "New game?", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
 
-        this.restartButton = new MenuButton({
+        this.respawnButton = new MenuButton({
             scene: this,
             x: 50,
             y: -40,
-            texture: "newgame"
-        }).setScale(0.4)
-        this.exitButton = new MenuButton({
+            texture: "respawnButton"
+        })
+        this.newGameButton = new MenuButton({
             scene: this,
             x: 50,
             y: 50,
-            texture: "exit"
-        }).setScale(0.4)
+            texture: "newgameButton"
+        })
     }
 
     private createMessage() {
@@ -103,11 +105,11 @@ export class OverMenu extends Phaser.Scene {
             // this.over,
             this.background,
             // this.scoreImg,
-            // this.scoreText,
+            this.scoreText,
             // this.highScoreImg,
-            // this.highScoreText,
-            this.restartButton,
-            this.exitButton
+            this.highScoreText,
+            this.respawnButton,
+            this.newGameButton
         ])
         Phaser.Display.Align.In.Center(this.container, this.zone)
 
@@ -123,6 +125,13 @@ export class OverMenu extends Phaser.Scene {
                 // this.createScoreAnimation()
             }
         })
+    }
+
+    private checkGameStatus() {
+        const status = this.registry.get("status")
+        if (status == Constants.STATUS_TIMEOUT) {
+            this.respawnButton.disableInteractive()
+        }
     }
 
     private createScoreAnimation() {
@@ -228,13 +237,13 @@ export class OverMenu extends Phaser.Scene {
     }
 
     private inputHandler() {
-        this.restartButton.onClick(this.restartFunction)
+        this.respawnButton.onClick(this.restartFunction)
 
-        this.exitButton.onClick(this.exitFunction)
+        this.newGameButton.onClick(this.exitFunction)
     }
 
     private restartFunction = () => {
-        this.restartButton.setScale(0.4)
+        this.respawnButton.setScale(1)
         // this.sound.play("click")
         this.tweens.add({
             targets: this.container,
@@ -255,7 +264,7 @@ export class OverMenu extends Phaser.Scene {
     }
 
     private exitFunction = () => {
-        this.exitButton.setScale(0.4)
+        this.newGameButton.setScale(1)
         // this.sound.play("click")
         this.tweens.add({
             targets: this.container,
@@ -267,6 +276,7 @@ export class OverMenu extends Phaser.Scene {
             ease: "Linear",
             onComplete: () => {
                 this.removeGameSceneEvents()
+                this.resetGlobalData()
                 this.scene.start("HUDScene")
                 this.scene.start("GameScene")
                 this.scene.bringToTop("HUDScene")
@@ -283,5 +293,12 @@ export class OverMenu extends Phaser.Scene {
         gameScene.events.off(Constants.EVENT_FISH_SCORE)
         gameScene.events.off(Constants.EVENT_PLAYER_RESPAWN)
         gameScene.events.off(Constants.EVENT_FISH_KILL_FISH)
+    }
+
+    private resetGlobalData() {
+        this.registry.set("time", Constants.TIME_PER_MATCH)
+        this.registry.set("playerKill", 0)
+        this.registry.set("playerScore", 0)
+        this.registry.set("status", Constants.STATUS_PLAYING)
     }
 }

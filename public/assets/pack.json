@@ -23,6 +23,11 @@
             },
             {
                 "type": "image",
+                "key": "energy",
+                "url": "./assets/images/energy.png"
+            },
+            {
+                "type": "image",
                 "key": "shield",
                 "url": "./assets/images/shield.png"
             },
@@ -65,6 +70,16 @@
                 "type": "image",
                 "key": "exit",
                 "url": "./assets/popup/exit.png"
+            },
+            {
+                "type": "image",
+                "key": "respawnButton",
+                "url": "./assets/popup/respawnButton.png"
+            },
+            {
+                "type": "image",
+                "key": "newgameButton",
+                "url": "./assets/popup/newgameButton.png"
             },
             {
                 "type": "image",

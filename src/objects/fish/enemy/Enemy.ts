@@ -43,7 +43,7 @@ export class Enemy extends Fish {
     }
 
     public getCollectible() {
-        this.updateRankingBoard()
+        this.updateRankingBoard(Constants.GET_ITEM_SCORE)
         this.setFishSpeed(Constants.SPRINT_SPEED)
         this.timeSprint = 800
     }
