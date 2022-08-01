@@ -65,7 +65,7 @@ export class HunterEnemy extends Enemy {
                 this.player.y
             )
 
-            if (distance < 500 && this.player.isVulnerable()) {
+            if (distance < 550 && this.player.isVulnerable()) {
                 this.isChasing = true
                 this.timeChasing = 4000
                 this.trackTarget()

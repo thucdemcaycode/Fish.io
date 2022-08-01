@@ -42,9 +42,11 @@ export class Collectible extends Phaser.GameObjects.Image {
                 targets: this,
                 x: { value: x, duration: 600, ease: "Power2" },
                 y: { value: y, duration: 800, ease: "Power2" },
+                alpha: { from: 0, to: 1 },
                 repeat: 0,
                 onComplete: () => {
                     this.isCollectable = true
+                    this.disappearCollectible()
                 }
             })
         } else {
@@ -68,7 +70,7 @@ export class Collectible extends Phaser.GameObjects.Image {
             scale: { from: 1.2, to: 0.2 },
             alpha: { from: 1, to: 0.2 },
             duration: 500,
-            delay: 3000,
+            delay: 2500,
             onComplete: () => {
                 this.destroy()
             }

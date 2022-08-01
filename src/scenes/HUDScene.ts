@@ -243,7 +243,7 @@ export class HUDScene extends Phaser.Scene {
 
     private checkFishScore(name: string, score: number) {
         this.rankingBoard[name] = score
-        if (this.leaders.length < 5) {
+        if (this.leaders && this.leaders.length < 5) {
             return
         }
         if (score > this.leaders[4][1]) {

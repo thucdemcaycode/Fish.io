@@ -48,7 +48,7 @@ export class EnemyManager {
         const height = Constants.GAMEWORLD_HEIGHT
         const fishes = Constants.FISH_TEXTURE_KEY
 
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < Constants.INIT_ENEMY_NUMBER; i++) {
             let x = Phaser.Math.Between(70, width - 70)
             let y = Phaser.Math.Between(70, height - 70)
 
@@ -70,13 +70,13 @@ export class EnemyManager {
 
     private generateEnemy = (x: number, y: number, texture: string) => {
         let type = Math.random()
-        if (type < 0.2) {
+        if (type < Constants.NOOB_ENEMY_RATE) {
             this.addNoobEnemy(x, y, texture)
-        } else if (type < 0.5) {
+        } else if (type < Constants.COLLECT_ENEMY_RATE) {
             this.addCollectEnemy(x, y, texture)
-        } else if (type < 0.9) {
+        } else if (type < Constants.CHASING_ENEMY_RATE) {
             this.addChasingEnemy(x, y, texture)
-        } else if (type <= 1) {
+        } else if (type <= Constants.HUNTER_ENEMY_RATE) {
             this.addHunterEnemy(x, y, texture)
         }
     }

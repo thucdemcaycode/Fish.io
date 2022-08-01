@@ -376,14 +376,11 @@ export class GameScene extends Phaser.Scene {
                 value: Constants.BIG_ITEM_VALUE
             })
 
-            meat1.disappearCollectible()
-            meat2.disappearCollectible()
-
             this.collectibles.add(meat1)
             this.collectibles.add(meat2)
         })
 
-        if (Math.random() > 0.8) {
+        if (Math.random() > 0.4) {
             this.spawnCollectible()
         }
     }

@@ -10,6 +10,7 @@ export const Constants = {
     STAMINA_WIDTH: 400,
     STAMINA_HEIGHT: 20,
     STAMINA_CONSUME_QTY: 0.0025,
+    INIT_ENEMY_NUMBER: 12,
     FISH_ALIVE: 15,
     KILLING_SCORE: 50,
     GET_ITEM_SCORE: 20,
@@ -74,5 +75,9 @@ export const Constants = {
     STATUS_WAITING: "waiting",
     STATUS_TIMEOUT: "timeout",
     SMALL_ITEM_VALUE: 0.025,
-    BIG_ITEM_VALUE: 0.1
+    BIG_ITEM_VALUE: 0.1,
+    NOOB_ENEMY_RATE: 0.2,
+    COLLECT_ENEMY_RATE: 0.5,
+    CHASING_ENEMY_RATE: 0.9,
+    HUNTER_ENEMY_RATE: 1
 }
