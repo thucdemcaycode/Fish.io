@@ -117,20 +117,22 @@ export class Enemy extends Fish {
     }
 
     private changeRespawnPosition() {
+        const width = Constants.GAMEWORLD_WIDTH
         const height = Constants.GAMEWORLD_HEIGHT
 
         let currentX = this.x
         let currentY = this.y
 
-        let x = Phaser.Math.Between(70, 200)
+        let x = Phaser.Math.Between(70, width - 70)
         let y = Phaser.Math.Between(70, height - 70)
 
         let distance = calDistance(currentX, currentY, x, y)
 
         while (distance < 800) {
-            x = Phaser.Math.Between(70, 200)
+            x = Phaser.Math.Between(70, width - 70)
             y = Phaser.Math.Between(70, height - 70)
             distance = calDistance(currentX, currentY, x, y)
+            console.log(Math.random())
         }
 
         this.x = x
