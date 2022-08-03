@@ -2,7 +2,6 @@ import { Constants } from "../../helpers/Contants"
 import { getRandomName } from "../../helpers/nameGenerator"
 import { ISpriteConstructor } from "../../interfaces/ISpriteConstructor"
 import { Shield } from "../shield/Shield"
-import { WeaponBody } from "../weapons/WeaponBody"
 import { WeaponContainer } from "../weapons/WeaponContainer"
 
 export class Fish extends Phaser.GameObjects.Sprite {
@@ -21,6 +20,9 @@ export class Fish extends Phaser.GameObjects.Sprite {
     protected bubbleEmitter: Phaser.GameObjects.Particles.ParticleEmitter
 
     protected countKillFish: number
+
+    protected weaponScale: number
+    protected fishScale: number
 
     protected weapon: WeaponContainer
 

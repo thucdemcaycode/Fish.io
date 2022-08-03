@@ -146,4 +146,13 @@ export class HunterEnemy extends Enemy {
             this.initHunterPlayer()
         }
     }
+
+    protected checkEnemyRespawnRate = () => {
+        let rate = Math.random()
+        if (rate < Constants.HUNTER_ENEMY_RESPAWN_RATE) {
+            this.hideFish()
+        } else {
+            this.destroyFish()
+        }
+    }
 }

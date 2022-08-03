@@ -191,7 +191,11 @@ export class HUDScene extends Phaser.Scene {
         game.events.on(Constants.EVENT_NEW_FISH, this.addNewFish, this)
         game.events.on(Constants.EVENT_FISH_SCORE, this.checkFishScore, this)
 
-        // game.events.on(Constants.EVENT_FISH_KILL_FISH, this.showFishName, this)
+        // game.events.on(
+        //     Constants.EVENT_FISH_RESPAWN_OR_LEFT,
+        //     this.showFishName,
+        //     this
+        // )
     }
 
     private addNewFish(name: string, score: number) {
@@ -243,7 +247,7 @@ export class HUDScene extends Phaser.Scene {
 
     private checkFishScore(name: string, score: number) {
         this.rankingBoard[name] = score
-        if (this.leaders && this.leaders.length < 5) {
+        if (!this.leaders || this.leaders.length < 5) {
             return
         }
         if (score > this.leaders[4][1]) {
@@ -276,8 +280,7 @@ export class HUDScene extends Phaser.Scene {
         }
     }
 
-    private showFishName = (fish: string, fishKilled: string) => {
-        let content = fish + " killed " + fishKilled
+    private showFishName = (content: string) => {
         const text = this.add.text(635, 200, content, {
             fontSize: "15px",
             fontFamily: "Revalia",

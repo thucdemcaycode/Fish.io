@@ -1,3 +1,4 @@
+import { Constants } from "../../../helpers/Contants"
 import { ISpriteConstructor } from "../../../interfaces/ISpriteConstructor"
 import { Enemy } from "./Enemy"
 
@@ -24,5 +25,14 @@ export class NoobEnemy extends Enemy {
 
         this.updateShield()
         this.updateNameText()
+    }
+
+    protected checkEnemyRespawnRate = () => {
+        let rate = Math.random()
+        if (rate < Constants.NOOB_ENEMY_RESPAWN_RATE) {
+            this.hideFish()
+        } else {
+            this.destroyFish()
+        }
     }
 }

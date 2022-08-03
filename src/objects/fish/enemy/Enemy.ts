@@ -1,4 +1,5 @@
 import { Constants } from "../../../helpers/Contants"
+import { calDistance } from "../../../helpers/Distance"
 import { ISpriteConstructor } from "../../../interfaces/ISpriteConstructor"
 import { Fish } from "../Fish"
 
@@ -7,6 +8,8 @@ export class Enemy extends Fish {
     protected timeSprint: number
 
     protected isRotating: boolean
+    private waitingRespawn: boolean
+    private timeRespawn: number
 
     private rectangle: Phaser.GameObjects.Rectangle
 
@@ -20,6 +23,8 @@ export class Enemy extends Fish {
         this.setFishSpeed(Constants.NORMAL_SPEED)
         this.timeSprint = 0
         this.isRotating = false
+        this.waitingRespawn = false
+        this.timeRespawn = 0
         this.initRectangle()
     }
 
@@ -29,13 +34,28 @@ export class Enemy extends Fish {
         this.rectangle.visible = false
     }
 
-    public showRectangle(x: number, y: number) {
+    public showRectangle(x: number, y: number, distance: number) {
         this.rectangle.setPosition(x, y)
         this.rectangle.visible = true
+
+        this.scaleTrackingRectangle(distance)
     }
 
     public hideRectangle() {
         this.rectangle.visible = false
+        this.rectangle.setScale(1)
+    }
+
+    private scaleTrackingRectangle(distance: number) {
+        if (distance >= 1000) {
+            this.rectangle.setScale(0.5)
+        } else if (distance > 750) {
+            this.rectangle.setScale(0.7)
+        } else if (distance > 500) {
+            this.rectangle.setScale(0.8)
+        } else {
+            this.rectangle.setScale(1.1)
+        }
     }
 
     protected setFishSpeed = (speed: number) => {
@@ -54,19 +74,110 @@ export class Enemy extends Fish {
 
         this.bubbleEmitter.visible = false
 
+        this.fishScale = this.scale
+        this.weaponScale = this.weapon.scale
+
         this.scene.tweens.add({
             targets: [this, this.weapon, this.fishNameText],
             scale: { from: 1.2, to: 0.2 },
             alpha: { from: 1, to: 0.2 },
             duration: 500,
             onComplete: () => {
-                this.rectangle.destroy()
-                this.bubbleEmitter.remove()
-                this.fishNameText.destroy()
-                this.destroy()
-                this.weapon.destroy()
+                this.checkEnemyRespawnRate()
             }
         })
+    }
+
+    protected checkEnemyRespawnRate = () => {}
+
+    protected hideFish() {
+        this.active = false
+        this.fishNameText.visible = false
+        this.visible = false
+        this.weapon.visible = false
+        this.bubbleEmitter.visible = false
+        this.rectangle.visible = false
+
+        this.changeRespawnPosition()
+
+        this.timeRespawn = Phaser.Math.Between(3000, 5000)
+        this.waitingRespawn = true
+    }
+
+    public handleRespawn = () => {
+        if (!this.waitingRespawn) return
+
+        if (this.timeRespawn < 0) {
+            this.timeRespawn = 0
+            this.waitingRespawn = false
+            this.fishRespawn()
+        } else {
+            this.timeRespawn -= 15
+        }
+    }
+
+    private changeRespawnPosition() {
+        const height = Constants.GAMEWORLD_HEIGHT
+
+        let currentX = this.x
+        let currentY = this.y
+
+        let x = Phaser.Math.Between(70, 200)
+        let y = Phaser.Math.Between(70, height - 70)
+
+        let distance = calDistance(currentX, currentY, x, y)
+
+        while (distance < 800) {
+            x = Phaser.Math.Between(70, 200)
+            y = Phaser.Math.Between(70, height - 70)
+            distance = calDistance(currentX, currentY, x, y)
+        }
+
+        this.x = x
+        this.y = y
+    }
+
+    protected destroyFish = () => {
+        console.log(this.getFishName() + " destroy")
+        this.rectangle.destroy()
+        this.bubbleEmitter.remove()
+        this.fishNameText.destroy()
+        this.destroy()
+        this.weapon.destroy()
+    }
+
+    public fishRespawn() {
+        console.log(this.getFishName() + " respawn")
+        this.active = true
+        this.shieldImage.active = true
+        this.fishNameText.visible = true
+        this.visible = true
+        this.weapon.visible = true
+        this.scene.physics.world.enable(this)
+        this.scene.physics.world.enable(this.weapon.getPhysicsBodyGroup())
+
+        this.scene.tweens.add({
+            targets: [this, this.weapon, this.fishNameText],
+            scale: { from: 0.2, to: 0.7 },
+            alpha: { from: 0.2, to: 0.5 },
+            duration: 500,
+            onComplete: () => {
+                this.textNameRespawn()
+                this.activeShield()
+                this.weaponRespawn()
+            }
+        })
+    }
+
+    private textNameRespawn() {
+        this.fishNameText.setScale(1)
+        this.fishNameText.setAlpha(1)
+    }
+
+    private weaponRespawn() {
+        this.weapon.setScale(this.weaponScale)
+        this.weapon.setAlpha(1)
+        this.setScale(this.fishScale)
     }
 
     protected rotateRandom() {
@@ -162,5 +273,9 @@ export class Enemy extends Fish {
 
     public getIgnoreObjects(): any {
         return [this.fishNameText, this.rectangle]
+    }
+
+    private emitEventRespawnOrLeft = (text: string) => {
+        this.scene.events.emit(Constants.EVENT_FISH_RESPAWN_OR_LEFT, text)
     }
 }

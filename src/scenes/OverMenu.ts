@@ -292,7 +292,7 @@ export class OverMenu extends Phaser.Scene {
         gameScene.events.off(Constants.EVENT_NEW_ENEMY)
         gameScene.events.off(Constants.EVENT_FISH_SCORE)
         gameScene.events.off(Constants.EVENT_PLAYER_RESPAWN)
-        gameScene.events.off(Constants.EVENT_FISH_KILL_FISH)
+        gameScene.events.off(Constants.EVENT_FISH_RESPAWN_OR_LEFT)
     }
 
     private resetGlobalData() {

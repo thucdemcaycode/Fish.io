@@ -166,4 +166,13 @@ export class ChasingEnemy extends Enemy {
             this.initChasingEnemy()
         }
     }
+
+    protected checkEnemyRespawnRate = () => {
+        let rate = Math.random()
+        if (rate < Constants.CHASING_ENEMY_RESPAWN_RATE) {
+            this.hideFish()
+        } else {
+            this.destroyFish()
+        }
+    }
 }

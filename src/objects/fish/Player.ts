@@ -11,9 +11,6 @@ export class Player extends Fish {
     private staminaBar: StaminaBar
     private bubbleSound: Phaser.Sound.BaseSound
 
-    private weaponScale: number
-    private fishScale: number
-
     constructor(aParams: ISpriteConstructor) {
         super(aParams)
 

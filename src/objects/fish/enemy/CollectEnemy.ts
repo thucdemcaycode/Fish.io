@@ -104,4 +104,13 @@ export class CollectEnemy extends Enemy {
             this.initCollectEnemy()
         }
     }
+
+    protected checkEnemyRespawnRate = () => {
+        let rate = Math.random()
+        if (rate < Constants.COLLECT_ENEMY_RESPAWN_RATE) {
+            this.hideFish()
+        } else {
+            this.destroyFish()
+        }
+    }
 }

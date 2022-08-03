@@ -7,6 +7,7 @@ import { Enemy } from "../objects/fish/enemy/Enemy"
 import { Fish } from "../objects/fish/Fish"
 import { WeaponBody } from "../objects/weapons/WeaponBody"
 import { EnemyManager } from "../objects/fish/enemy/EnemyManager"
+import { calDistance } from "../helpers/Distance"
 
 export class GameScene extends Phaser.Scene {
     private background: Phaser.GameObjects.TileSprite
@@ -27,6 +28,7 @@ export class GameScene extends Phaser.Scene {
         this.sound.play(Constants.START_GAME_SOUND, {
             volume: 0.6
         })
+        this.sound.mute = true
     }
 
     create() {
@@ -53,6 +55,8 @@ export class GameScene extends Phaser.Scene {
     private updateTrackingEnemies() {
         this.enemyManager.getEnemies().children.each((enemy: any) => {
             if (!(enemy instanceof Enemy)) return
+            enemy.handleRespawn()
+            if (!enemy.active) return
 
             if (!this.cameras.main.worldView.contains(enemy.x, enemy.y)) {
                 // Show rectangle object
@@ -84,7 +88,14 @@ export class GameScene extends Phaser.Scene {
             let pointX: number = point[0].x
             let pointY: number = point[0].y
 
-            enemy.showRectangle(pointX, pointY)
+            let distance = calDistance(
+                this.player.x,
+                this.player.y,
+                enemy.x,
+                enemy.y
+            )
+
+            enemy.showRectangle(pointX, pointY, distance)
         }
     }
 
@@ -343,20 +354,9 @@ export class GameScene extends Phaser.Scene {
 
         this.soundWeaponHitFish(fishKilling, fish)
 
-        this.emitEventFishKillFish(
-            fishKilling.getFishName(),
-            fish.getFishName()
-        )
-
         weapon.hitFish()
         this.createCollectible(fish.x, fish.y)
         fish.gotHit()
-
-        if (this.enemyManager.countEnemyAlive() <= Constants.FISH_ALIVE) {
-            this.time.delayedCall(3000, () => {
-                this.enemyManager.spawnEnemy()
-            })
-        }
     }
 
     private createCollectible = (x: number, y: number) => {
@@ -380,7 +380,7 @@ export class GameScene extends Phaser.Scene {
             this.collectibles.add(meat2)
         })
 
-        if (Math.random() > 0.4) {
+        if (Math.random() > 0.3) {
             this.spawnCollectible()
         }
     }
@@ -411,9 +411,5 @@ export class GameScene extends Phaser.Scene {
                 volume: 0.5
             })
         }
-    }
-
-    private emitEventFishKillFish = (fish: string, fishKilled: string) => {
-        this.events.emit(Constants.EVENT_FISH_KILL_FISH, fish, fishKilled)
     }
 }
