@@ -15,7 +15,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
     protected numberOfKilling: number
 
     protected fishNameText: Phaser.GameObjects.Text
-    protected shieldImage: Phaser.GameObjects.Image
+    protected shieldImage: Shield
 
     protected bubbleEmitter: Phaser.GameObjects.Particles.ParticleEmitter
 
@@ -162,7 +162,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
         return !this.shieldImage.active && this.visible
     }
 
-    private createAnims(key: string) {
+    protected createAnims(key: string) {
         this.anims.create({
             key: this.ainmKey,
             frames: this.anims.generateFrameNumbers(key, {
@@ -212,8 +212,8 @@ export class Fish extends Phaser.GameObjects.Sprite {
     public gotHit(): void {}
 
     public killOtherFish() {
-        this.updateRankingBoard(Constants.KILLING_SCORE)
         this.numberOfKilling += 1
+        this.updateRankingBoard(Constants.KILLING_SCORE)
 
         this.weapon.getFishHead()
         this.countKillFish += 1
@@ -232,7 +232,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
         )
     }
 
-    private upgradeFish() {
+    protected upgradeFish() {
         if (this.fishSize < 1.2) {
             this.fishSize += 0.1
             this.setScale(this.fishSize)

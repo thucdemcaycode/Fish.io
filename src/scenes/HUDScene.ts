@@ -12,6 +12,8 @@ export class HUDScene extends Phaser.Scene {
     private playerKill: number
     private playerScore: number
 
+    private timeBossComing: number
+
     constructor() {
         super({
             key: "HUDScene"
@@ -65,6 +67,9 @@ export class HUDScene extends Phaser.Scene {
 
         this.registry.values.time -= 1
         let time = this.registry.values.time
+        if (time == this.timeBossComing) {
+            this.warningBossComing()
+        }
 
         let minutes = Math.floor(time / 60)
         let seconds = time - minutes * 60
@@ -95,6 +100,47 @@ export class HUDScene extends Phaser.Scene {
         gameScene.scene.pause()
         this.scene.pause()
         this.scene.launch(Constants.OVER_SCENE)
+    }
+
+    private warningBossComing() {
+        const currentStatus = this.registry.get("status")
+        if (currentStatus == Constants.STATUS_WAITING) {
+            this.timeBossComing -= 10
+            return
+        }
+
+        this.sound.play(Constants.BOSS_COMING_SOUND)
+
+        const width = this.sys.canvas.width
+        const height = this.sys.canvas.height
+
+        const textComing = this.add
+            .image(width / 2, height / 2, "bossComing")
+            .setOrigin(0.5, 0.5)
+
+        const backgroundBossComing = this.add
+            .image(width / 2, height / 2, "backgroundBoss")
+            .setOrigin(0.5, 0.5)
+            .setDisplaySize(width, height)
+
+        this.tweens.add({
+            targets: textComing,
+            alpha: 0.5,
+            scale: 1.2,
+            yoyo: true,
+            duration: 500,
+            repeat: 3,
+            onComplete: () => {
+                textComing.destroy()
+                backgroundBossComing.destroy()
+                this.emitEventBoss()
+            }
+        })
+    }
+
+    private emitEventBoss() {
+        const gameScene = this.scene.get(Constants.GAME_SCENE)
+        gameScene.events.emit(Constants.EVENT_BOSS_COMING)
     }
 
     private decorateBoard() {
@@ -172,6 +218,7 @@ export class HUDScene extends Phaser.Scene {
         this.totalFish = 0
         this.playerKill = 0
         this.playerScore = 0
+        this.timeBossComing = Constants.TIME_BOSS_COMING
     }
 
     private addText(x: number, y: number, value: string) {

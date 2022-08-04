@@ -2,9 +2,9 @@ import { Constants } from "../../../helpers/Contants"
 import { calDistance } from "../../../helpers/Distance"
 import { ISpriteConstructor } from "../../../interfaces/ISpriteConstructor"
 import { Fish } from "../Fish"
-import { Enemy } from "./Enemy"
+import { Boss } from "./Boss"
 
-export class ChasingEnemy extends Enemy {
+export class ChasingBoss extends Boss {
     private fishes: Phaser.GameObjects.Group
     private targetFish: Fish | undefined
     private isChasing: boolean
@@ -17,10 +17,10 @@ export class ChasingEnemy extends Enemy {
         super(aParams)
         this.fishes = fishes
 
-        this.initChasingEnemy()
+        this.initChasingBoss()
     }
 
-    private initChasingEnemy() {
+    private initChasingBoss() {
         this.isChasing = false
         this.timeChasing = 0
         this.targetFish = undefined
@@ -69,18 +69,18 @@ export class ChasingEnemy extends Enemy {
                 this.targetFish.y
             )
         } else {
-            currentDistance = 500
+            currentDistance = 700
         }
 
         this.fishes.children.each((fish: any) => {
             if (fish != this && !this.isRunning && fish.isVulnerable()) {
                 let distance = calDistance(this.x, this.y, fish.x, fish.y)
 
-                if (distance < 300 && distance < currentDistance) {
+                if (distance < 500 && distance < currentDistance) {
                     if (this.isRotating) return
 
                     this.isChasing = true
-                    this.timeChasing = 3000
+                    this.timeChasing = 4500
                     this.targetFish = fish
                     this.trackTarget()
                 }
@@ -151,30 +151,19 @@ export class ChasingEnemy extends Enemy {
         if (this.x < 80) {
             let angle = Phaser.Math.Between(-50, 50)
             this.tweenRotate(angle)
-            this.initChasingEnemy()
+            this.initChasingBoss()
         } else if (this.x > Constants.GAMEWORLD_WIDTH - 80) {
             let angle = Phaser.Math.Between(90, 180)
             this.tweenRotate(angle)
-            this.initChasingEnemy()
+            this.initChasingBoss()
         } else if (this.y < 80) {
             let angle = Phaser.Math.Between(0, 180)
             this.tweenRotate(angle)
-            this.initChasingEnemy()
+            this.initChasingBoss()
         } else if (this.y > Constants.GAMEWORLD_HEIGHT - 80) {
             let angle = Phaser.Math.Between(-180, 0)
             this.tweenRotate(angle)
-            this.initChasingEnemy()
+            this.initChasingBoss()
         }
-    }
-
-    protected checkEnemyRespawnRate = () => {
-        let rate = Math.random()
-        if (rate < Constants.CHASING_ENEMY_RESPAWN_RATE) {
-            this.hideFish()
-        } else {
-            this.destroyFish()
-        }
-
-        this.initChasingEnemy()
     }
 }

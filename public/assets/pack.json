@@ -237,6 +237,21 @@
                 "url": "./assets/heads/fish15.png"
             },
             {
+                "type": "image",
+                "key": "saw",
+                "url": "./assets/boss/saw.png"
+            },
+            {
+                "type": "image",
+                "key": "backgroundBoss",
+                "url": "./assets/boss/backgroundBoss.png"
+            },
+            {
+                "type": "image",
+                "key": "bossComing",
+                "url": "./assets/boss/bossComing.png"
+            },
+            {
                 "type": "spritesheet",
                 "key": "blueFish",
                 "url": "./assets/sprites/blue_fish.png",
@@ -279,6 +294,15 @@
                 "frameConfig": {
                   "frameWidth": 122,
                   "frameHeight": 76
+                }
+            },
+            {
+                "type": "spritesheet",
+                "key": "shark",
+                "url": "./assets/boss/shark.png",
+                "frameConfig": {
+                  "frameWidth": 122,
+                  "frameHeight": 110
                 }
             }
         ]

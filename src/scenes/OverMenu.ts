@@ -275,7 +275,7 @@ export class OverMenu extends Phaser.Scene {
             duration: 250,
             ease: "Linear",
             onComplete: () => {
-                this.removeGameSceneEvents()
+                this.removeSceneEvents()
                 this.resetGlobalData()
                 this.scene.start("HUDScene")
                 this.scene.start("GameScene")
@@ -286,13 +286,13 @@ export class OverMenu extends Phaser.Scene {
         })
     }
 
-    private removeGameSceneEvents() {
-        const gameScene = this.scene.get("GameScene")
-        gameScene.events.off(Constants.EVENT_NEW_FISH)
-        gameScene.events.off(Constants.EVENT_NEW_ENEMY)
-        gameScene.events.off(Constants.EVENT_FISH_SCORE)
-        gameScene.events.off(Constants.EVENT_PLAYER_RESPAWN)
-        gameScene.events.off(Constants.EVENT_FISH_RESPAWN_OR_LEFT)
+    private removeSceneEvents() {
+        const gameScene = this.scene.get(Constants.GAME_SCENE)
+        const gameSceneEvents = Constants.GAME_SCENE_EVENTS
+
+        for (const event of gameSceneEvents) {
+            gameScene.events.off(event)
+        }
     }
 
     private resetGlobalData() {

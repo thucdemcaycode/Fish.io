@@ -49,6 +49,7 @@ export class BootScene extends Phaser.Scene {
         this.load.audio("fishDie", "./assets/sounds/fishDie.wav")
         this.load.audio("startGameMusic", "./assets/sounds/startGameMusic.wav")
         this.load.audio("backgroundMusic", "./assets/sounds/bgMusic.wav")
+        this.load.audio("bossComing", "./assets/sounds/bossComing.wav")
 
         this.load.pack("preload", "./assets/pack.json", "preload")
     }

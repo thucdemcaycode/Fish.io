@@ -154,5 +154,7 @@ export class HunterEnemy extends Enemy {
         } else {
             this.destroyFish()
         }
+
+        this.initHunterPlayer()
     }
 }

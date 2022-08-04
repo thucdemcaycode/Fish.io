@@ -60,6 +60,9 @@ export class EnemyManager {
     public getEnemies() {
         return this.enemies
     }
+    public getFishes() {
+        return this.fishes
+    }
     public getWeapons() {
         return this.weapons
     }

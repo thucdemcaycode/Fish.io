@@ -8,6 +8,8 @@ import { Fish } from "../objects/fish/Fish"
 import { WeaponBody } from "../objects/weapons/WeaponBody"
 import { EnemyManager } from "../objects/fish/enemy/EnemyManager"
 import { calDistance } from "../helpers/Distance"
+import { ChasingBoss } from "../objects/fish/boss/ChasingBoss"
+import { Boss } from "../objects/fish/boss/Boss"
 
 export class GameScene extends Phaser.Scene {
     private background: Phaser.GameObjects.TileSprite
@@ -16,6 +18,7 @@ export class GameScene extends Phaser.Scene {
     private sprintButton: SprintButton
 
     private enemyManager: EnemyManager
+    private bosses: Phaser.GameObjects.Group
     private collectibles: Phaser.GameObjects.Group
 
     constructor() {
@@ -28,7 +31,6 @@ export class GameScene extends Phaser.Scene {
         this.sound.play(Constants.START_GAME_SOUND, {
             volume: 0.6
         })
-        this.sound.mute = true
     }
 
     create() {
@@ -49,13 +51,18 @@ export class GameScene extends Phaser.Scene {
 
     update(time: number, delta: number): void {
         this.player.update()
-        this.updateTrackingEnemies()
+        this.updatePlayerPosition()
+        this.updateTrackingObjects()
     }
 
-    private updateTrackingEnemies() {
+    private updatePlayerPosition() {
+        this.registry.set("playerX", this.player.x)
+        this.registry.set("playerY", this.player.y)
+    }
+
+    private updateTrackingObjects() {
         this.enemyManager.getEnemies().children.each((enemy: any) => {
             if (!(enemy instanceof Enemy)) return
-            enemy.handleRespawn()
             if (!enemy.active) return
 
             if (!this.cameras.main.worldView.contains(enemy.x, enemy.y)) {
@@ -63,19 +70,33 @@ export class GameScene extends Phaser.Scene {
                 const centerX = this.cameras.main.worldView.centerX
                 const centerY = this.cameras.main.worldView.centerY
 
-                this.trackEnemy(centerX, centerY, enemy.x, enemy.y, enemy)
+                this.trackObject(centerX, centerY, enemy.x, enemy.y, enemy)
             } else {
                 enemy.hideRectangle()
             }
         })
+        this.bosses.children.each((boss: any) => {
+            if (!(boss instanceof Boss)) return
+            if (!boss.active) return
+
+            if (!this.cameras.main.worldView.contains(boss.x, boss.y)) {
+                // Show rectangle object
+                const centerX = this.cameras.main.worldView.centerX
+                const centerY = this.cameras.main.worldView.centerY
+
+                this.trackObject(centerX, centerY, boss.x, boss.y, boss)
+            } else {
+                boss.hideRectangle()
+            }
+        })
     }
 
-    private trackEnemy(
+    private trackObject(
         centerX: number,
         centerY: number,
         x: number,
         y: number,
-        enemy: Enemy
+        enemy: Enemy | Boss
     ) {
         let line = new Phaser.Geom.Line(centerX, centerY, x, y)
 
@@ -135,6 +156,8 @@ export class GameScene extends Phaser.Scene {
         this.createCollectibles()
 
         this.createEnemies()
+
+        this.createBossGroup()
     }
 
     private createCollectibles() {
@@ -168,6 +191,12 @@ export class GameScene extends Phaser.Scene {
         )
     }
 
+    private createBossGroup() {
+        this.bosses = this.add.group({
+            runChildUpdate: true
+        })
+    }
+
     private inputHandler() {
         this.input.keyboard.on("keydown-SPACE", () => {
             this.player.sprintFish()
@@ -183,6 +212,33 @@ export class GameScene extends Phaser.Scene {
         this.events.on(Constants.EVENT_PLAYER_RESPAWN, this.addPlayerCollider)
 
         this.events.on(Constants.EVENT_NEW_ENEMY, this.addNewEnemyCollider)
+
+        this.events.on(Constants.EVENT_BOSS_COMING, this.addNewBoss)
+    }
+
+    private addNewBoss = () => {
+        const width = Constants.GAMEWORLD_WIDTH
+        const height = Constants.GAMEWORLD_HEIGHT
+
+        const boss = new ChasingBoss(
+            {
+                scene: this,
+                x: width / 2,
+                y: height / 2,
+                texture: "shark"
+            },
+            this.enemyManager.getFishes()
+        )
+
+        this.physics.add.overlap(
+            boss.getWeapon(),
+            this.enemyManager.getFishes(),
+            this.weaponHitFish,
+            undefined,
+            this
+        )
+
+        this.bosses.add(boss)
     }
 
     private createColliders() {
@@ -214,8 +270,24 @@ export class GameScene extends Phaser.Scene {
         )
 
         this.physics.add.overlap(
+            this.bosses,
+            this.collectibles,
+            this.enemyHitCollectible,
+            undefined,
+            this
+        )
+
+        this.physics.add.overlap(
             this.player.getWeapon(),
             this.enemyManager.getEnemies(),
+            this.weaponHitFish,
+            undefined,
+            this
+        )
+
+        this.physics.add.overlap(
+            this.player.getWeapon(),
+            this.bosses,
             this.weaponHitFish,
             undefined,
             this
@@ -226,6 +298,13 @@ export class GameScene extends Phaser.Scene {
             this.physics.add.overlap(
                 weapon,
                 this.player,
+                this.weaponHitFish,
+                undefined,
+                this
+            )
+            this.physics.add.overlap(
+                weapon,
+                this.bosses,
                 this.weaponHitFish,
                 undefined,
                 this
@@ -262,9 +341,17 @@ export class GameScene extends Phaser.Scene {
     private addPlayerCollider = () => {
         this.registry.set("status", Constants.STATUS_PLAYING)
         this.player.fishRespawn()
+
         this.physics.add.overlap(
             this.player.getWeapon(),
             this.enemyManager.getEnemies(),
+            this.weaponHitFish,
+            undefined,
+            this
+        )
+        this.physics.add.overlap(
+            this.player.getWeapon(),
+            this.bosses,
             this.weaponHitFish,
             undefined,
             this
