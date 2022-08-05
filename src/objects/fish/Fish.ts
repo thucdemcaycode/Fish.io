@@ -161,6 +161,9 @@ export class Fish extends Phaser.GameObjects.Sprite {
     public isVulnerable(): boolean {
         return !this.shieldImage.active && this.visible
     }
+    public setFishName(name: string) {
+        this.fishNameText.setText(name)
+    }
 
     protected createAnims(key: string) {
         this.anims.create({

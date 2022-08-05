@@ -65,9 +65,7 @@ export class StartScene extends Phaser.Scene {
                     this.registry.set("playerName", name)
                 }
 
-                this.scene.start("HUDScene")
-                this.scene.start("GameScene")
-                this.scene.bringToTop("HUDScene")
+                this.scene.start(Constants.MATCHING_SCENE)
             }
         })
 

@@ -256,9 +256,9 @@ export class OverMenu extends Phaser.Scene {
             onComplete: () => {
                 this.scene.stop()
                 this.scene
-                    .get("GameScene")
+                    .get(Constants.GAME_SCENE)
                     .events.emit(Constants.EVENT_PLAYER_RESPAWN)
-                this.scene.resume("GameScene")
+                this.scene.resume(Constants.GAME_SCENE)
             }
         })
     }
@@ -277,9 +277,10 @@ export class OverMenu extends Phaser.Scene {
             onComplete: () => {
                 this.removeSceneEvents()
                 this.resetGlobalData()
-                this.scene.start("HUDScene")
-                this.scene.start("GameScene")
-                this.scene.bringToTop("HUDScene")
+                this.scene.get(Constants.GAME_SCENE).scene.stop()
+                this.scene.get(Constants.HUD_SCENE).scene.stop()
+
+                this.scene.start(Constants.MATCHING_SCENE)
                 this.scene.stop()
             },
             delay: 100

@@ -1,5 +1,4 @@
 import { Constants } from "../../../helpers/Contants"
-import { WeaponBody } from "../../weapons/WeaponBody"
 import { Player } from "../Player"
 import { ChasingEnemy } from "./ChasingEnemy"
 import { CollectEnemy } from "./CollectEnemy"
@@ -29,6 +28,8 @@ export class EnemyManager {
         this.initVariables()
 
         this.createEnemies()
+
+        this.changeEnemyName()
     }
 
     private initVariables() {
@@ -55,6 +56,15 @@ export class EnemyManager {
             let texture = fishes[Math.floor(Math.random() * fishes.length)]
             this.generateEnemy(x, y, texture)
         }
+    }
+
+    private changeEnemyName() {
+        let enemyNames = this.scene.registry.get("enemyNames") as string[]
+
+        this.enemies.children.each((enemy: any) => {
+            let name = enemyNames.pop()
+            enemy.setFishName(name)
+        })
     }
 
     public getEnemies() {
