@@ -3,6 +3,7 @@ import { BootScene } from "./scenes/BootScene"
 import { OverMenu } from "./scenes/OverMenu"
 import { HUDScene } from "./scenes/HUDScene"
 import { StartScene } from "./scenes/StartScene"
+import { MatchingScene } from "./scenes/MatchingScene"
 
 export const GameConfig: Phaser.Types.Core.GameConfig = {
     title: "Fish.io",
@@ -31,5 +32,5 @@ export const GameConfig: Phaser.Types.Core.GameConfig = {
             debug: false
         }
     },
-    scene: [BootScene, StartScene, HUDScene, GameScene, OverMenu]
+    scene: [BootScene, StartScene, MatchingScene, HUDScene, GameScene, OverMenu]
 }
