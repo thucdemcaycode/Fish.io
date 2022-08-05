@@ -124,6 +124,17 @@ export class HUDScene extends Phaser.Scene {
             .setDisplaySize(width, height)
 
         this.tweens.add({
+            targets: backgroundBossComing,
+            alpha: 0.5,
+            yoyo: true,
+            duration: 500,
+            repeat: 3,
+            onComplete: () => {
+                backgroundBossComing.destroy()
+            }
+        })
+
+        this.tweens.add({
             targets: textComing,
             alpha: 0.5,
             scale: 1.2,
@@ -132,7 +143,6 @@ export class HUDScene extends Phaser.Scene {
             repeat: 3,
             onComplete: () => {
                 textComing.destroy()
-                backgroundBossComing.destroy()
                 this.emitEventBoss()
             }
         })

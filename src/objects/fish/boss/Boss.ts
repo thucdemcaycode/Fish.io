@@ -203,7 +203,7 @@ export class Boss extends Fish {
         }
     }
 
-    private initBossSize() {
+    protected initBossSize() {
         for (let i = 0; i < 16; i++) {
             this.weapon.getFishHead()
             this.upgradeFish()

@@ -94,6 +94,8 @@ export class Enemy extends Fish {
         this.weapon.visible = false
         this.rectangle.visible = false
         this.bubbleEmitter.visible = false
+        this.timeSprint = 0
+        this.setFishSpeed(Constants.NORMAL_SPEED)
 
         let timeRespawn = Phaser.Math.Between(3000, 5000)
         this.scene.time.delayedCall(

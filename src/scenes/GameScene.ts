@@ -10,6 +10,7 @@ import { EnemyManager } from "../objects/fish/enemy/EnemyManager"
 import { calDistance } from "../helpers/Distance"
 import { ChasingBoss } from "../objects/fish/boss/ChasingBoss"
 import { Boss } from "../objects/fish/boss/Boss"
+import { MiniBoss } from "../objects/fish/boss/MiniBoss"
 
 export class GameScene extends Phaser.Scene {
     private background: Phaser.GameObjects.TileSprite
@@ -217,6 +218,13 @@ export class GameScene extends Phaser.Scene {
     }
 
     private addNewBoss = () => {
+        this.addBigBoss()
+        for (let i = 0; i < 3; i++) {
+            this.addMiniBoss()
+        }
+    }
+
+    private addBigBoss = () => {
         const width = Constants.GAMEWORLD_WIDTH
         const height = Constants.GAMEWORLD_HEIGHT
 
@@ -225,6 +233,33 @@ export class GameScene extends Phaser.Scene {
                 scene: this,
                 x: width / 2,
                 y: height / 2,
+                texture: "shark"
+            },
+            this.enemyManager.getFishes()
+        )
+
+        this.physics.add.overlap(
+            boss.getWeapon(),
+            this.enemyManager.getFishes(),
+            this.weaponHitFish,
+            undefined,
+            this
+        )
+
+        this.bosses.add(boss)
+    }
+    private addMiniBoss = () => {
+        const width = Constants.GAMEWORLD_WIDTH
+        const height = Constants.GAMEWORLD_HEIGHT
+
+        let x = Phaser.Math.Between(70, width - 70)
+        let y = Phaser.Math.Between(70, height - 70)
+
+        const boss = new MiniBoss(
+            {
+                scene: this,
+                x: x,
+                y: y,
                 texture: "shark"
             },
             this.enemyManager.getFishes()
@@ -440,6 +475,11 @@ export class GameScene extends Phaser.Scene {
         if (fish == fishKilling) return
 
         this.soundWeaponHitFish(fishKilling, fish)
+
+        if (fish instanceof Boss) {
+            weapon.hitFish()
+            this.createCollectible(fish.x, fish.y)
+        }
 
         weapon.hitFish()
         this.createCollectible(fish.x, fish.y)
