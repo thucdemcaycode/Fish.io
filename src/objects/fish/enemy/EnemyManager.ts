@@ -1,4 +1,5 @@
 import { Constants } from "../../../helpers/Contants"
+import { calDistance } from "../../../helpers/Distance"
 import { Player } from "../Player"
 import { ChasingEnemy } from "./ChasingEnemy"
 import { CollectEnemy } from "./CollectEnemy"
@@ -49,9 +50,21 @@ export class EnemyManager {
         const height = Constants.GAMEWORLD_HEIGHT
         const fishes = Constants.FISH_TEXTURE_KEY
 
+        const centerX = width / 2
+        const centerY = height / 2
+
         for (let i = 0; i < Constants.INIT_ENEMY_NUMBER; i++) {
             let x = Phaser.Math.Between(70, width - 70)
             let y = Phaser.Math.Between(70, height - 70)
+
+            let distance = calDistance(centerX, centerY, x, y)
+
+            while (distance < 550) {
+                x = Phaser.Math.Between(70, width - 70)
+                y = Phaser.Math.Between(70, height - 70)
+
+                distance = calDistance(centerX, centerY, x, y)
+            }
 
             let texture = fishes[Math.floor(Math.random() * fishes.length)]
             this.generateEnemy(x, y, texture)

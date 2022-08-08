@@ -39,6 +39,8 @@ export class GameScene extends Phaser.Scene {
 
         this.createGameButtons()
 
+        this.createJoystickMoveArea()
+
         this.createGameObjects()
 
         this.createColliders()
@@ -149,6 +151,22 @@ export class GameScene extends Phaser.Scene {
         this.input.addPointer(1)
         this.createJoystick()
         this.createSprintButton()
+    }
+
+    private createJoystickMoveArea() {
+        const rectangle = this.add
+            .rectangle(30, 80, 300, 280)
+            .setOrigin(0, 0)
+            .setScrollFactor(0)
+            .setInteractive()
+
+        rectangle.on(Phaser.Input.Events.POINTER_DOWN, () => {
+            const x = this.input.pointer1.x
+            const y = this.input.pointer1.y
+            console.log(x, y)
+            console.log()
+            this.joystick.moveToPlayerTouch(x, y)
+        })
     }
 
     private createGameObjects() {

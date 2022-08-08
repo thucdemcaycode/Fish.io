@@ -90,16 +90,13 @@ export class HUDScene extends Phaser.Scene {
         const currentStatus = this.registry.get("status")
         this.registry.set("status", "timeout")
 
-        // if(currentStatus==Constants.STATUS_WAITING){
-
-        // }else{
-
-        // }
-
         const gameScene = this.scene.get(Constants.GAME_SCENE)
         gameScene.scene.pause()
         this.scene.pause()
-        this.scene.launch(Constants.OVER_SCENE)
+
+        if (currentStatus != Constants.STATUS_WAITING) {
+            this.scene.launch(Constants.OVER_SCENE)
+        }
     }
 
     private warningBossComing() {

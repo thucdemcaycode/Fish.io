@@ -36,4 +36,9 @@ export class Joystick extends VirtualJoyStick {
     public getIgnoreObjects() {
         return [this.baseCircle, this.thumbCircle]
     }
+
+    public moveToPlayerTouch(x: number, y: number) {
+        this.x = x
+        this.y = y
+    }
 }

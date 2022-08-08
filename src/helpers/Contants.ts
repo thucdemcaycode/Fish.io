@@ -16,6 +16,7 @@ export const Constants = {
     KILLING_SCORE: 50,
     GET_ITEM_SCORE: 20,
     TIME_PER_MATCH: 120,
+    MAX_NUMBER_RESPAWN: 2,
     FISH_TEXTURE_KEY: [
         "blueFish",
         "yellowFish",

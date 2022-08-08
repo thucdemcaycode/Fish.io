@@ -51,6 +51,12 @@ export class BootScene extends Phaser.Scene {
         this.load.audio("backgroundMusic", "./assets/sounds/bgMusic.wav")
         this.load.audio("bossComing", "./assets/sounds/bossComing.wav")
 
+        this.load.atlas(
+            "flares",
+            "./assets/particles/flares.png",
+            "./assets/particles/flares.json"
+        )
+
         this.load.pack("preload", "./assets/pack.json", "preload")
     }
     update(): void {

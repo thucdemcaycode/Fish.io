@@ -3,16 +3,18 @@ import { MenuButton } from "../objects/buttons/MenuButton"
 
 export class OverMenu extends Phaser.Scene {
     private background: Phaser.GameObjects.Image
-    private over: Phaser.GameObjects.Image
     private respawnButton: MenuButton
     private newGameButton: MenuButton
-    private scoreImg: Phaser.GameObjects.Image
+
     private scoreText: Phaser.GameObjects.Text
-    private highScoreImg: Phaser.GameObjects.Image
-    private highScoreText: Phaser.GameObjects.Text
+    private scoreNumberText: Phaser.GameObjects.Text
+
+    private killText: Phaser.GameObjects.Text
+    private killNumberText: Phaser.GameObjects.Text
+
+    private newgameText: Phaser.GameObjects.Text
 
     private container: Phaser.GameObjects.Container
-
     private zone: Phaser.GameObjects.Zone
 
     constructor() {
@@ -45,22 +47,10 @@ export class OverMenu extends Phaser.Scene {
     private createMenu() {
         this.background = this.add.image(0, 0, "back").setScale(1.1, 1.9)
 
-        // this.createMessage()
+        this.createScoreText()
+        this.createKillText()
 
-        // this.scoreImg = this.add.image(-150, -65, "score").setScale(0.4)
-        this.scoreText = this.add
-            .text(-60, -40, "Respawn?", {
-                fontSize: "20px",
-                fontFamily: "Revalia",
-                align: "center",
-                stroke: "#000000",
-                strokeThickness: 1
-            })
-            .setAlign("center")
-            .setOrigin(0.5, 0.5)
-
-        // this.highScoreImg = this.add.image(-150, 80, "high").setScale(0.4)
-        this.highScoreText = this.add
+        this.newgameText = this.add
             .text(-60, 50, "New game?", {
                 fontSize: "20px",
                 fontFamily: "Revalia",
@@ -85,29 +75,65 @@ export class OverMenu extends Phaser.Scene {
         })
     }
 
-    private createMessage() {
-        const isWinning: boolean = this.registry.get("status") == "win"
-        const isReachNewBest: boolean =
-            this.registry.get("score") != 0 &&
-            this.registry.get("score") == (this.registry.get("highScore") || 0)
+    private createScoreText() {
+        this.scoreText = this.add
+            .text(-60, -40, "Respawn?", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
 
-        if (isWinning) {
-            this.over = this.add.image(0, -300, "victory").setScale(0.4)
-        } else if (isReachNewBest) {
-            this.over = this.add.image(0, -350, "congrat").setScale(0.4)
-        } else {
-            this.over = this.add.image(0, -400, "overimg").setScale(0.4)
-        }
+        this.scoreNumberText = this.add
+            .text(50, -40, "0", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
+            .setVisible(false)
+    }
+
+    private createKillText() {
+        this.killText = this.add
+            .text(-60, -10, "Kill:", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
+            .setVisible(false)
+
+        this.killNumberText = this.add
+            .text(50, -10, "0", {
+                fontSize: "20px",
+                fontFamily: "Revalia",
+                align: "center",
+                stroke: "#000000",
+                strokeThickness: 1
+            })
+            .setAlign("center")
+            .setOrigin(0.5, 0.5)
+            .setVisible(false)
     }
 
     private createContainer() {
         this.container = this.add.container(0, 0, [
-            // this.over,
             this.background,
-            // this.scoreImg,
             this.scoreText,
-            // this.highScoreImg,
-            this.highScoreText,
+            this.scoreNumberText,
+            this.killText,
+            this.killNumberText,
+            this.newgameText,
             this.respawnButton,
             this.newGameButton
         ])
@@ -128,42 +154,67 @@ export class OverMenu extends Phaser.Scene {
     }
 
     private checkGameStatus() {
+        if (this.killText.visible) return
+
         const status = this.registry.get("status")
-        if (status == Constants.STATUS_TIMEOUT) {
-            this.respawnButton.disableInteractive()
+        const countRespawn = this.registry.get("countRespawn") || 0
+
+        let ableToRespawn =
+            status != Constants.STATUS_TIMEOUT &&
+            countRespawn < Constants.MAX_NUMBER_RESPAWN
+
+        if (!ableToRespawn) {
+            this.hideRespawnButton()
+            this.showScoreAndKill()
         }
     }
 
+    private hideRespawnButton() {
+        this.respawnButton.disableInteractive()
+        this.respawnButton.setTint(0x2b4865)
+        this.respawnButton.visible = false
+    }
+
+    private showScoreAndKill() {
+        this.scoreText.setText("Score:")
+        this.scoreNumberText.visible = true
+        this.killText.visible = true
+        this.killNumberText.visible = true
+
+        this.createScoreAnimation()
+    }
     private createScoreAnimation() {
         this.tweens.add({
-            targets: [this.scoreText, this.highScoreText],
+            targets: [this.scoreNumberText, this.killNumberText],
             scaleX: 1.2,
             scaleY: 1.2,
             yoyo: true,
             duration: 500
         })
 
-        let score = this.registry.get("score") || 0
-        let highScore = this.registry.get("highScore") || 0
-        this.tweenCountScore(score, highScore)
-        this.emitCongrats(score, highScore)
+        let score = this.registry.get("playerScore") || 0
+        let kill = this.registry.get("playerKill") || 0
+        this.tweenCountScore(score, kill)
+        this.emitCongrats(score, kill)
     }
 
-    private tweenCountScore(score: number, highScore: number) {
+    private tweenCountScore(score: number, kill: number) {
         this.tweens.addCounter({
             from: 0,
             to: score,
             duration: 1000,
             onUpdate: (tween) => {
-                this.scoreText.setText(Math.floor(tween.getValue()).toString())
+                this.scoreNumberText.setText(
+                    Math.floor(tween.getValue()).toString()
+                )
             }
         })
         this.tweens.addCounter({
             from: 0,
-            to: highScore,
+            to: kill,
             duration: 1000,
             onUpdate: (tween) => {
-                this.highScoreText.setText(
+                this.killNumberText.setText(
                     Math.floor(tween.getValue()).toString()
                 )
             }
@@ -172,35 +223,7 @@ export class OverMenu extends Phaser.Scene {
 
     private emitCongrats(score: number, highScore: number) {
         this.time.delayedCall(1250, () => {
-            if (score == highScore && score != 0) {
-                // this.sound.play("yeah")
-                this.emitGlowEmitter()
-                this.emitFirework()
-            } else {
-                // this.sound.play("over")
-            }
-        })
-    }
-
-    private emitGlowEmitter() {
-        let logoSource = {
-            getRandomPoint: (vec: any) => {
-                let x = Phaser.Math.Between(0, this.sys.canvas.width)
-                let y = Phaser.Math.Between(0, this.sys.canvas.height)
-
-                return vec.setTo(x, y)
-            }
-        }
-
-        this.add.particles("flares").createEmitter({
-            x: 0,
-            y: 0,
-            lifespan: 1000,
-            gravityY: 10,
-            scale: { start: 0, end: 0.5, ease: "Quad.easeOut" },
-            alpha: { start: 1, end: 0, ease: "Quad.easeIn" },
-            blendMode: "ADD",
-            emitZone: { type: "random", source: logoSource }
+            this.emitFirework()
         })
     }
 
@@ -219,7 +242,7 @@ export class OverMenu extends Phaser.Scene {
             lifespan: 1000,
             quantity: 500,
             reserve: 500,
-            scale: { min: 0.05, max: 0.15 },
+            scale: { min: 0.025, max: 0.075 },
             speed: { min: 300, max: 600 },
             x: 300,
             y: 300
@@ -254,6 +277,7 @@ export class OverMenu extends Phaser.Scene {
             duration: 250,
             ease: "Linear",
             onComplete: () => {
+                this.increaseCountRespawm()
                 this.scene.stop()
                 this.scene
                     .get(Constants.GAME_SCENE)
@@ -287,6 +311,11 @@ export class OverMenu extends Phaser.Scene {
         })
     }
 
+    private increaseCountRespawm() {
+        let countRespawn = this.registry.get("countRespawn") || 0
+        this.registry.set("countRespawn", countRespawn + 1)
+    }
+
     private removeSceneEvents() {
         const gameScene = this.scene.get(Constants.GAME_SCENE)
         const gameSceneEvents = Constants.GAME_SCENE_EVENTS
@@ -300,6 +329,11 @@ export class OverMenu extends Phaser.Scene {
         this.registry.set("time", Constants.TIME_PER_MATCH)
         this.registry.set("playerKill", 0)
         this.registry.set("playerScore", 0)
+        this.registry.set("countRespawn", 0)
         this.registry.set("status", Constants.STATUS_PLAYING)
+    }
+
+    update(time: number, delta: number): void {
+        this.checkGameStatus()
     }
 }
