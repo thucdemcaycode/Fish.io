@@ -35,6 +35,10 @@ export class OverMenu extends Phaser.Scene {
         this.inputHandler()
     }
 
+    update(time: number, delta: number): void {
+        this.checkGameStatus()
+    }
+
     private createZone() {
         const width = this.sys.canvas.width
         const height = this.sys.canvas.height
@@ -331,9 +335,5 @@ export class OverMenu extends Phaser.Scene {
         this.registry.set("playerScore", 0)
         this.registry.set("countRespawn", 0)
         this.registry.set("status", Constants.STATUS_PLAYING)
-    }
-
-    update(time: number, delta: number): void {
-        this.checkGameStatus()
     }
 }

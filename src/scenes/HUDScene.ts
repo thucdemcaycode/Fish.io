@@ -32,6 +32,10 @@ export class HUDScene extends Phaser.Scene {
         this.createTimer()
     }
 
+    update(time: number, delta: number): void {
+        this.updatePlayerText()
+    }
+
     private createTexts() {
         this.textElements = new Map([
             ["NAME1", this.addText(630, 5, "1. Top 1 server")],
@@ -71,6 +75,12 @@ export class HUDScene extends Phaser.Scene {
             this.warningBossComing()
         }
 
+        let timeLeft = this.getTimeLeftText(time)
+
+        this.textElements.get("TIME")?.setText(timeLeft)
+    }
+
+    private getTimeLeftText(time: number) {
         let minutes = Math.floor(time / 60)
         let seconds = time - minutes * 60
         let secondText: string
@@ -80,15 +90,14 @@ export class HUDScene extends Phaser.Scene {
             secondText = seconds.toString()
         }
 
-        this.textElements
-            .get("TIME")
-            ?.setText(`Time left: ${minutes}:${secondText}`)
+        return `Time left: ${minutes}:${secondText}`
     }
 
     private gameTimeOut() {
         this.timer.destroy()
         const currentStatus = this.registry.get("status")
         this.registry.set("status", "timeout")
+        this.sound.stopByKey(Constants.BUBBLE_SOUND)
 
         const gameScene = this.scene.get(Constants.GAME_SCENE)
         gameScene.scene.pause()
@@ -196,16 +205,9 @@ export class HUDScene extends Phaser.Scene {
 
         let time = Constants.TIME_PER_MATCH
 
-        let minutes = Math.floor(time / 60)
-        let seconds = time - minutes * 60
-        let secondText: string
-        if (seconds < 10) {
-            secondText = "0" + seconds
-        } else {
-            secondText = seconds.toString()
-        }
+        let timeLeft = this.getTimeLeftText(time)
 
-        timeText?.setText(`Time left: ${minutes}:${secondText}`)
+        timeText?.setText(timeLeft)
     }
 
     private decoratePlayerText() {
@@ -354,9 +356,5 @@ export class HUDScene extends Phaser.Scene {
                 text.destroy()
             }
         })
-    }
-
-    update(time: number, delta: number): void {
-        this.updatePlayerText()
     }
 }
