@@ -2,7 +2,6 @@ import { IImageConstructor } from "../../interfaces/IImageConstructor"
 import { Button } from "./Button"
 
 export class SprintButton extends Button {
-    private circleHitArea: Phaser.GameObjects.Arc
     constructor(aParams: IImageConstructor) {
         super(aParams)
         this.placeButton()
@@ -16,24 +15,10 @@ export class SprintButton extends Button {
     }
 
     private createHitArea() {
-        this.circleHitArea = this.scene.add
-            .circle(720, 280, 70)
-            .setOrigin(0.5, 0.5)
-            .setScrollFactor(0)
-            .setInteractive()
-            .setDepth(6)
-    }
-
-    public onPress(callback: Function) {
-        this.circleHitArea.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            this.onPressDownEffect()
-            callback()
-        })
-    }
-    public unPress(callback: Function) {
-        this.circleHitArea.on(Phaser.Input.Events.POINTER_OUT, () => {
-            this.unPressDownEffect()
-            callback()
-        })
+        this.removeInteractive()
+        this.setInteractive(
+            new Phaser.Geom.Circle(this.width / 2, this.height / 2, 90),
+            Phaser.Geom.Circle.Contains
+        )
     }
 }

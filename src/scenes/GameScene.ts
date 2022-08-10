@@ -22,6 +22,8 @@ export class GameScene extends Phaser.Scene {
     private bosses: Phaser.GameObjects.Group
     private collectibles: Phaser.GameObjects.Group
 
+    private secondCamera: Phaser.Cameras.Scene2D.Camera
+
     constructor() {
         super({
             key: "GameScene"
@@ -130,6 +132,26 @@ export class GameScene extends Phaser.Scene {
         )
         this.cameras.main.startFollow(this.player)
         // this.cameras.main.setZoom(0.5)
+
+        // this.createSecondCamera()
+    }
+
+    private createSecondCamera() {
+        this.secondCamera = this.cameras.add(
+            0,
+            0,
+            this.background.displayWidth,
+            this.background.displayHeight
+        )
+        this.secondCamera.startFollow(this.player)
+        this.secondCamera.ignore(this.background)
+        this.secondCamera.ignore(this.player.getIgnoreObjects())
+
+        this.secondCamera.ignore(this.collectibles)
+        this.secondCamera.ignore(this.enemyManager.getFishes())
+
+        this.cameras.main.ignore(this.joystick.getIgnoreObjects())
+        this.cameras.main.ignore(this.sprintButton)
     }
 
     private createBackground() {
@@ -159,8 +181,13 @@ export class GameScene extends Phaser.Scene {
             .setInteractive()
 
         rectangle.on(Phaser.Input.Events.POINTER_DOWN, () => {
-            const x = this.input.pointer1.x
-            const y = this.input.pointer1.y
+            let x = this.input.pointer1.x
+            let y = this.input.pointer1.y
+            if (x == 0 && y == 0) {
+                x = this.input.mousePointer.x
+                y = this.input.mousePointer.y
+            }
+
             this.joystick.moveToPlayerTouch(x, y)
         })
     }
