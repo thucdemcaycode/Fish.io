@@ -12,8 +12,15 @@ export class CollectEnemy extends Enemy {
         super(aParams)
         this.collectibles = items
 
+        this.initRangeChasing()
+
         this.initCollectEnemy()
     }
+
+    private initRangeChasing() {
+        this.rangeChasing = Constants.COLLECT_RANGE_INIT
+    }
+
     private initCollectEnemy() {
         this.isChasing = false
         this.targetPosition = []
@@ -50,7 +57,7 @@ export class CollectEnemy extends Enemy {
             if (!this.isChasing && item.isCollectable) {
                 let distance = calDistance(this.x, this.y, item.x, item.y)
 
-                if (distance < 400) {
+                if (distance < this.rangeChasing) {
                     this.isChasing = true
                     this.targetPosition.push(item.x)
                     this.targetPosition.push(item.y)
@@ -111,6 +118,12 @@ export class CollectEnemy extends Enemy {
             this.hideFish()
         } else {
             this.destroyFish()
+        }
+    }
+
+    protected levelUp() {
+        if (this.rangeChasing < Constants.COLLECT_RANGE_MAX) {
+            this.rangeChasing += Constants.COLLECT_RANGE_STEP
         }
     }
 }

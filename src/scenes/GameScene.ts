@@ -269,6 +269,15 @@ export class GameScene extends Phaser.Scene {
         let x = Phaser.Math.Between(70, width - 70)
         let y = Phaser.Math.Between(70, height - 70)
 
+        let distance = calDistance(x, y, this.player.x, this.player.y)
+
+        while (distance < 500) {
+            x = Phaser.Math.Between(70, width - 70)
+            y = Phaser.Math.Between(70, height - 70)
+
+            distance = calDistance(x, y, this.player.x, this.player.y)
+        }
+
         const boss = new MiniBoss(
             {
                 scene: this,

@@ -6,6 +6,7 @@ import { Fish } from "../Fish"
 export class Enemy extends Fish {
     protected playingSpeed: number
     protected timeSprint: number
+    protected rangeChasing: number
 
     protected isRotating: boolean
 
@@ -245,7 +246,7 @@ export class Enemy extends Fish {
     protected sprintRandom() {
         if (Math.random() > 0.9985 && this.timeSprint == 0) {
             this.setFishSpeed(Constants.SPRINT_SPEED)
-            this.timeSprint = 1000
+            this.timeSprint = Phaser.Math.Between(900, 1150)
         }
     }
 
@@ -274,4 +275,15 @@ export class Enemy extends Fish {
     private emitEventRespawnOrLeft = (text: string) => {
         this.scene.events.emit(Constants.EVENT_FISH_RESPAWN_OR_LEFT, text)
     }
+
+    protected upgradeFish() {
+        if (this.fishSize < 1.2) {
+            this.fishSize += 0.1
+            this.setScale(this.fishSize)
+
+            this.levelUp()
+        }
+    }
+
+    protected levelUp() {}
 }

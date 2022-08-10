@@ -17,7 +17,13 @@ export class ChasingEnemy extends Enemy {
         super(aParams)
         this.fishes = fishes
 
+        this.initRangeChasing()
+
         this.initChasingEnemy()
+    }
+
+    private initRangeChasing() {
+        this.rangeChasing = Constants.CHASING_RANGE_INIT
     }
 
     private initChasingEnemy() {
@@ -69,14 +75,17 @@ export class ChasingEnemy extends Enemy {
                 this.targetFish.y
             )
         } else {
-            currentDistance = 500
+            currentDistance = Constants.CHASING_RANGE_MAX + 10
         }
 
         this.fishes.children.each((fish: any) => {
             if (fish != this && !this.isRunning && fish.isVulnerable()) {
                 let distance = calDistance(this.x, this.y, fish.x, fish.y)
 
-                if (distance < 300 && distance < currentDistance) {
+                if (
+                    distance < this.rangeChasing &&
+                    distance < currentDistance
+                ) {
                     if (this.isRotating) return
 
                     this.isChasing = true
@@ -176,5 +185,11 @@ export class ChasingEnemy extends Enemy {
         }
 
         this.initChasingEnemy()
+    }
+
+    protected levelUp() {
+        if (this.rangeChasing < Constants.CHASING_RANGE_MAX) {
+            this.rangeChasing += Constants.CHASING_RANGE_STEP
+        }
     }
 }

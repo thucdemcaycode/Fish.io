@@ -62,6 +62,7 @@ export class Fish extends Phaser.GameObjects.Sprite {
 
         this.scene.physics.world.enable(this)
         this.body.setCollideWorldBounds(true)
+        this.body.setCircle(41, 30)
     }
 
     private initVariables() {
@@ -201,10 +202,12 @@ export class Fish extends Phaser.GameObjects.Sprite {
 
         if (onCircle1 || onCircle2) {
             this.setFlipY(false)
+            this.body.setOffset(30, 0)
         }
 
         if (onCircle3 || onCircle4) {
             this.setFlipY(true)
+            this.body.setOffset(18, 0)
         }
     }
 

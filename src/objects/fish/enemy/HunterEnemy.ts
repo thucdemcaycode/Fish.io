@@ -15,7 +15,13 @@ export class HunterEnemy extends Enemy {
         super(aParams)
         this.player = player
 
+        this.initRangeChasing()
+
         this.initHunterPlayer()
+    }
+
+    private initRangeChasing() {
+        this.rangeChasing = Constants.HUNTER_RANGE_INIT
     }
 
     private initHunterPlayer() {
@@ -65,7 +71,7 @@ export class HunterEnemy extends Enemy {
                 this.player.y
             )
 
-            if (distance < 550 && this.player.isVulnerable()) {
+            if (distance < this.rangeChasing && this.player.isVulnerable()) {
                 this.isChasing = true
                 this.timeChasing = 4000
                 this.trackTarget()
@@ -156,5 +162,11 @@ export class HunterEnemy extends Enemy {
         }
 
         this.initHunterPlayer()
+    }
+
+    protected levelUp() {
+        if (this.rangeChasing < Constants.HUNTER_RANGE_MAX) {
+            this.rangeChasing += Constants.HUNTER_RANGE_STEP
+        }
     }
 }
