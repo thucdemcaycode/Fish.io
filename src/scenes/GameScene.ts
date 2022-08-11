@@ -22,8 +22,6 @@ export class GameScene extends Phaser.Scene {
     private bosses: Phaser.GameObjects.Group
     private collectibles: Phaser.GameObjects.Group
 
-    private secondCamera: Phaser.Cameras.Scene2D.Camera
-
     constructor() {
         super({
             key: "GameScene"
@@ -132,26 +130,6 @@ export class GameScene extends Phaser.Scene {
         )
         this.cameras.main.startFollow(this.player)
         // this.cameras.main.setZoom(0.5)
-
-        // this.createSecondCamera()
-    }
-
-    private createSecondCamera() {
-        this.secondCamera = this.cameras.add(
-            0,
-            0,
-            this.background.displayWidth,
-            this.background.displayHeight
-        )
-        this.secondCamera.startFollow(this.player)
-        this.secondCamera.ignore(this.background)
-        this.secondCamera.ignore(this.player.getIgnoreObjects())
-
-        this.secondCamera.ignore(this.collectibles)
-        this.secondCamera.ignore(this.enemyManager.getFishes())
-
-        this.cameras.main.ignore(this.joystick.getIgnoreObjects())
-        this.cameras.main.ignore(this.sprintButton)
     }
 
     private createBackground() {
@@ -256,6 +234,12 @@ export class GameScene extends Phaser.Scene {
         this.events.on(Constants.EVENT_NEW_ENEMY, this.addNewEnemyCollider)
 
         this.events.on(Constants.EVENT_BOSS_COMING, this.addNewBoss)
+
+        this.events.on(Constants.EVENT_ZOOM_OUT, this.zoomOut)
+    }
+
+    private zoomOut = () => {
+        this.cameras.main.zoomTo(this.cameras.main.zoom - 0.15, 1200)
     }
 
     private addNewBoss = () => {

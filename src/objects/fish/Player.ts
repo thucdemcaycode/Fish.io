@@ -207,4 +207,19 @@ export class Player extends Fish {
     public getIgnoreObjects() {
         return [this.fishNameText, this.staminaBar]
     }
+
+    protected upgradeFish() {
+        if (this.fishSize < 1.2) {
+            console.log(this.fishSize)
+            if (this.fishSize >= 0.95 && this.fishSize <= 1.05) {
+                this.emitEventZoomOut()
+            }
+            this.fishSize += 0.1
+            this.setScale(this.fishSize)
+        }
+    }
+
+    private emitEventZoomOut() {
+        this.scene.events.emit(Constants.EVENT_ZOOM_OUT)
+    }
 }

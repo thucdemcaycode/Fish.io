@@ -64,13 +64,15 @@ export const Constants = {
     EVENT_NEW_ENEMY: "newEnemy",
     EVENT_FISH_RESPAWN_OR_LEFT: "respawnOrLeft",
     EVENT_BOSS_COMING: "bossComing",
+    EVENT_ZOOM_OUT: "zoomOut",
     GAME_SCENE_EVENTS: [
         "newFish",
         "fishScore",
         "respawn",
         "newEnemy",
         "respawnOrLeft",
-        "bossComing"
+        "bossComing",
+        "zoomIn"
     ],
     STAB_SOUND: "stab",
     GET_STAB_SOUND: "getStab",
